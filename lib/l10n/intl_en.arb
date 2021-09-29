@@ -1,0 +1,23 @@
+{
+  "authorization": "Authorization",
+  "logIn": "Log in",
+  "mainTitle": "Unsplash Gallery",
+  "navBarItemOne": "Feed",
+  "navBarItemTwo": "Search",
+  "navBarItemThree": "User",
+  "defaultDescription": "No description",
+  "save": "Save",
+  "download": "Download",
+  "close": "Close",
+  "downloadTitle": "Downloading photos",
+  "downloadingSure": "Are u sure, u want to download a photo?",
+  "clearCache": "Clear cache",
+  "collections": "Collections",
+  "defaultColName": "Default collection name",
+  "photos": "Photos",
+  "likes": "Likes",
+  "haveInternet" : "Internet connection established",
+  "noInternet": "No internet connection",
+  "noPhotos": "Your photo album is empty",
+  "noLikedPhotos": "You have no liked photos"
+}
