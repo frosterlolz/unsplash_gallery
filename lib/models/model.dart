@@ -448,7 +448,7 @@ class Collection{
     // links = Links.fromJson(json["links"]);
     user = json['user'] != null ? Sponsor.fromJson(json['user']) : null;
     // user = Sponsor.fromJson(json["user"]);
-    coverPhoto = Photo.fromJson(json["cover_photo"]);
+    coverPhoto = json["cover_photo"] != null ? Photo.fromJson(json["cover_photo"]) : null;
     // previewPhotos: List<PreviewPhoto>.from(json["preview_photos"].map((x) => PreviewPhoto.fromJson(x))),
   }
 

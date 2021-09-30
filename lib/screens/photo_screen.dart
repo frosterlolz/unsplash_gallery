@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:share/share.dart';
+import 'package:unsplash_gallery/data_provider.dart';
 import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/models/model.dart';
 import 'package:unsplash_gallery/res/colors.dart';
@@ -12,9 +13,11 @@ import 'package:unsplash_gallery/utils/sheets.dart';
 import 'package:unsplash_gallery/widgets/buttons/like_button.dart';
 import 'package:unsplash_gallery/widgets/photo.dart';
 import 'package:unsplash_gallery/widgets/user_mini_block.dart';
+import 'package:unsplash_gallery/res/globals.dart' as globals;
 
 class PhotoPage extends StatefulWidget {
   const PhotoPage({Key? key, required this.photo}) : super(key: key);
+
 
   final Photo photo;
 
@@ -22,20 +25,50 @@ class PhotoPage extends StatefulWidget {
   _PhotoPageState createState() => _PhotoPageState();
 }
 
+
 class _PhotoPageState extends State<PhotoPage> {
+  final ScrollController _colListController = ScrollController();
+  int pageCollectionsCount = 1;
+  bool isLoadingCol = false; // collections
+  List<Collection> myColList = [];
+  bool? isAdded;
+  bool isLoading = false;
+
+  @override
+  initState(){
+    super.initState();
+
+    _getMyCollections(pageCollectionsCount);
+    _colListController.addListener(() {
+      if (_colListController.position.pixels >=
+          _colListController.position.maxScrollExtent * 0.8) {
+        _getMyCollections(pageCollectionsCount);}
+      });
+  }
+
+  @override
+  void dispose() {
+    _colListController.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     List<Widget> bottomSheetList = <Widget>[
+      ListTile(
+        title: Center(child: Text(S.of(context).addToCollection)),
+        onTap: _addToMyCollection
+      ),
       ListTile(
         title: Center(child: Text(S.of(context).clearCache)),
         onTap: _clearCache,
       ),
     ];
-    Photo photo = widget.photo;
     return Scaffold(
-        appBar: _buildAppBar(photo, bottomSheetList),
+        appBar: _buildAppBar(widget.photo, bottomSheetList),
         body: SingleChildScrollView(
-          child: buildPage(photo),
+          child: buildPage(widget.photo),
         )
     );
   }
@@ -161,11 +194,97 @@ class _PhotoPageState extends State<PhotoPage> {
     ),);
 
   void _clearCache() {
-
+    Navigator.pop(context);
     DefaultCacheManager().emptyCache();
     imageCache!.clear();
     imageCache!.clearLiveImages();
     setState(() {});
   }
 
+  void _getMyCollections(int page) async {
+    if (!isLoadingCol) {
+      setState(() {
+        isLoadingCol = true;
+      });
+      var tempList = await DataProvider.getCollectionsByUser(globals.gMyProfile!.username!, page, 20);
+
+      setState(() {
+        isLoadingCol = false;
+        myColList.addAll(tempList.collections!);
+        pageCollectionsCount++;
+      });
+    }
+  }
+
+
+  void _addToMyCollection() {
+    Navigator.pop(context);
+    Sheets.showBottomModalSheet(context, [_buildColList()]);
+  }
+
+  _buildColList() => ListView.builder(
+    controller: _colListController,
+    itemCount: myColList.length,
+    scrollDirection: Axis.vertical,
+    shrinkWrap: true,
+    itemBuilder: (context, index) {
+      if (index == myColList.length) {
+        return Center(
+          child: Opacity(
+            opacity: isLoadingCol ? 1 : 0,
+            child: const CircularProgressIndicator(),
+          ),
+        );
+      }
+      return Column(
+        children:[
+          ListTile(
+              title: Center(child: Text( myColList[index].title ?? myColList[index].id! )),
+              onTap: (){
+                Navigator.pop(context);
+                _addToCollection(myColList[index].id!, widget.photo.id);
+                // открывается прогрессбар
+              }),
+          const Divider(
+            thickness: 2,)
+        ],
+      );},
+  );
+
+  void _addToCollection(colId, photoId) async {
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+      });
+      OverlayState? overlayState = Overlay.of(context);
+      OverlayEntry overlayEntry = OverlayEntry(builder: (context)=> Positioned(
+        // top: MediaQuery.of(context).viewInsets.top + 50,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,  // получаем width всего экрана
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              decoration: BoxDecoration(
+                color: ThemeData.dark().primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const CircularProgressIndicator(), // если что, добавить примари колор
+            ),
+          ),
+        ),
+      ),
+      );
+      overlayState!.insert(overlayEntry);
+      int statusCode = await DataProvider.addToCollection(colId, photoId);
+      overlayEntry.remove();
+      setState(() {
+        isLoading = false;
+        statusCode >= 200 && statusCode < 300 ? isAdded = true : isAdded =
+        false;
+      });
+    }
+  }
 }

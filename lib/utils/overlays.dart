@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 class Overlays {
 
 
-  static void showOverlay(BuildContext context, message) async {
+  static void showOverlay(BuildContext context, Widget value) async {
     OverlayState? overlayState = Overlay.of(context);
     OverlayEntry overlayEntry = OverlayEntry(builder: (context)=> Positioned(
       top: MediaQuery.of(context).viewInsets.top + 50,
@@ -18,7 +18,7 @@ class Overlays {
               color: ThemeData.dark().primaryColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(message), // если что, добавить примари колор
+            child: value, // если что, добавить примари колор
           ),
         ),
       ),

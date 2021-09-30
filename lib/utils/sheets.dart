@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class Sheets{
 
-  static void showBottomModalSheet(context, List<Widget> list) {
+  static void
+  showBottomModalSheet(context, List<Widget> list) {
     {
       showModalBottomSheet(
           isScrollControlled: true,
@@ -13,7 +14,7 @@ class Sheets{
               )
           ),
           context: context,
-          builder: (context){
+          builder: (_){
             // совместно с isScrollControlled позволяет контролировать высотку ботом шита
             return SafeArea(
               child: Wrap(

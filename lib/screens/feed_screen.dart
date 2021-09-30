@@ -6,7 +6,6 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:unsplash_gallery/data_provider.dart';
 import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/models/model.dart';
-import 'package:unsplash_gallery/res/colors.dart';
 import 'package:unsplash_gallery/screens/photo_screen.dart';
 import 'package:unsplash_gallery/utils/overlays.dart';
 import 'package:unsplash_gallery/widgets/about_widget.dart';
@@ -111,7 +110,7 @@ class _FeedScreenState extends State<FeedScreen> {
     hasInternet = await InternetConnectionChecker().hasConnection;
     final message = hasInternet ? S.of(context).haveInternet : S.of(context).noInternet;
 
-    Overlays.showOverlay(context, message);
+    Overlays.showOverlay(context, Text(message));
   }
 
   void _getData(int page) async {
@@ -125,7 +124,6 @@ class _FeedScreenState extends State<FeedScreen> {
       setState(() {
         isLoading = false;
         photoList.addAll(tempList.photos!);
-        print(tempList.photos?.first.description);
         pageCount++;
       });
     }

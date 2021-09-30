@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unsplash_gallery/models/model.dart';
-import 'package:unsplash_gallery/screens/profile_screen.dart';
+import 'package:unsplash_gallery/screens/profile.dart';
 import 'package:unsplash_gallery/widgets/buttons/like_button.dart';
 import 'package:unsplash_gallery/widgets/user_avatar.dart';
 
@@ -39,7 +39,7 @@ class DetailedBlockState extends State<DetailedBlock> with TickerProviderStateMi
             setState(() {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context)=>Profile(photo.user!)));
+                  MaterialPageRoute(builder: (context)=>ProfilePage(user: photo.user!)));
             });},
               child: detailedBlock(photo)
           ),

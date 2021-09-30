@@ -7,9 +7,8 @@ import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/models/model.dart';
 import 'package:unsplash_gallery/res/colors.dart';
 import 'package:unsplash_gallery/screens/feed_screen.dart';
-import 'package:unsplash_gallery/screens/my_profile.dart';
 import 'package:unsplash_gallery/widgets/bottom_nav_bar.dart';
-import 'package:unsplash_gallery/widgets/buttons/change_theme.dart';
+import 'package:unsplash_gallery/res/globals.dart' as globals;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -64,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           const FeedScreen(),
           Container(),
-          Container(),
+          Container(), // don't forget about value TRUE in MyProfile
           // const Center(child: ChangeTheme(),),
           // user == null ? const Center(child: CircularProgressIndicator()) : MyProfilePage(user: user!,),
           // isLoading != true ? PhotoListScreen(photoList) : Center(child: CircularProgressIndicator()),
@@ -90,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var tempUser = await DataProvider.getMyProfile();
     setState(() {
       user = tempUser;
+      globals.gMyProfile = user;
     });
   }
 }

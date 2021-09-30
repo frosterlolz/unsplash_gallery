@@ -23,15 +23,16 @@ import 'package:unsplash_gallery/models/model.dart'; // для выполнен�
 */
 
 class DataProvider {
+  static const String baseUrl = '';
 
   // static const String _appId = "261112"; //not used, just for info
-  static String authToken = "OuD11c1ZZOwodVtG4bX69AkuioYdLnoKKG0AVU6DszA";
+  static String authToken = "ZjPc-BWcEgllcCHccQmYrtUCLML5538oEOWQPV_zaLQ";
   static const String _accessKey =
       'ZO8jyGxChpxOQJr2JC41DHOkNnQLDW3_2OpN-Wsir08'; //app access key from console
   static const String _secretKey =
       'LxTDPoMfhxvH6mMqKPLTXX2yMn1dW1aUx6Kpl6EoamQ'; //app secrey key from console
   static const String authUrl =
-      'https://unsplash.com/oauth/authorize?client_id=$_accessKey&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=public+write_likes'; //authorize url from https://unsplash.com/oauth/applications/{your_app_id}
+      'https://unsplash.com/oauth/authorize?client_id=$_accessKey&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=public+write_likes+write_collections'; //authorize url from https://unsplash.com/oauth/applications/{your_app_id}
 
   // авторизация
   static Future<Auth> doLogin({String? oneTimeCode}) async { // на входе получаю одноразовый код
@@ -199,6 +200,20 @@ class DataProvider {
       return PhotoList.fromJson(json.decode(response.body));
     } else {
       throw Exception('Error: ${response.reasonPhrase}');
+    }
+  }
+
+  static Future addToCollection(colId, photoId) async { // на входе получаю одноразовый код
+    Dio dio = Dio();
+    var response = await dio.post('https://api.unsplash.com/collections/$colId/add', // делаю POST запрос
+        options: Options(
+          headers: {'Authorization': 'Bearer $authToken'}),
+        data:'{"collection_id": "$colId", "photo_id": "$photoId"}'
+    );
+    if (response.statusCode! >= 200 && response.statusCode! < 300) {
+      return response.statusCode;
+    } else {
+      throw Exception('АШИБКАААА: ${response.statusMessage}');
     }
   }
 }

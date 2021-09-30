@@ -19,5 +19,6 @@
   "haveInternet" : "Internet connection established",
   "noInternet": "No internet connection",
   "noPhotos": "Your photo album is empty",
-  "noLikedPhotos": "You have no liked photos"
+  "noLikedPhotos": "You have no liked photos",
+  "addToCollection": "Add to collection"
 }

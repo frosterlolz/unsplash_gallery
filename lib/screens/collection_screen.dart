@@ -14,8 +14,7 @@ class CollectionListScreen extends StatefulWidget {
   State<StatefulWidget> createState() => CollectionListScreenState();
 }
 
-class CollectionListScreenState extends State<CollectionListScreen> with TickerProviderStateMixin {
-  Collection? _collection;
+class CollectionListScreenState extends State<CollectionListScreen> {
   final ScrollController _scrollController = ScrollController();
   int pageCount = 0;
   bool isLoading = false;
@@ -24,15 +23,14 @@ class CollectionListScreenState extends State<CollectionListScreen> with TickerP
 
   @override
   void initState() {
-
-    _getCollectionPhotos(_collection!.id.toString(), pageCount);
+    super.initState();
+    _getCollectionPhotos(widget.collection.id!, pageCount);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent * 0.8) {
-        _getCollectionPhotos(_collection!.id.toString(), pageCount);
+        _getCollectionPhotos(widget.collection.id!, pageCount);
       }
     });
-    super.initState();
   }
 
   @override
@@ -45,19 +43,19 @@ class CollectionListScreenState extends State<CollectionListScreen> with TickerP
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_collection!.title ?? S.of(context).defaultColName,
+        title: Text(widget.collection.title ?? S.of(context).defaultColName,
             style: const TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 17
             ),
           ),
         centerTitle: true,
-        actions: [
-          IconButton(
-              onPressed: (){},
-              icon: const Icon(Icons.add)
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //       onPressed: (){},
+        //       icon: const Icon(Icons.add)
+        //   ),
+        // ],
       ),
       body: _buildListView(context, photoList),
     );

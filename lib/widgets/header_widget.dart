@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/models/model.dart';
-import 'package:unsplash_gallery/res/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Container buildHeader(BuildContext context, Sponsor? user) {
@@ -19,17 +18,12 @@ Container buildHeader(BuildContext context, Sponsor? user) {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             elevation: 5.0,
-            color: Colors.white,
+            // color: Colors.white,
             child: Column(
               children: <Widget>[
-                const SizedBox(
-                  height: 50.0,
-                ),
-                Text(
-                  user?.name ?? 'Name null',
-                  style: AppStyles.h3.copyWith(color: Colors.black),
-                ),
-                const SizedBox(height: 5.0,),
+                const SizedBox(height: 50.0),
+                Text(user?.name ?? 'Name null'),
+                const SizedBox(height: 5.0),
                 buildSocials(user),
                 SizedBox(
                   height: 40.0,
@@ -87,9 +81,11 @@ Container buildHeader(BuildContext context, Sponsor? user) {
               shape: const CircleBorder(),
               child: CircleAvatar(
                 radius: 40.0,
-                backgroundImage: CachedNetworkImageProvider(user?.profileImage?.medium
-                    ?? 'https://i.pinimg.com/originals/d8/42/e2/d842e2a8aecaffff34ae744a96896ac9.jpg'
-                  ,),
+                backgroundImage: CachedNetworkImageProvider(
+                  user?.profileImage?.medium
+                    ?? 'https://i.pinimg.com/originals/d8/42/e2/d842e2a8aecaffff34ae744a96896ac9.jpg',
+                cacheKey: UniqueKey().toString()
+                ),
               ),
             ),
           ],

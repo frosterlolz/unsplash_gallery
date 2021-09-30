@@ -32,7 +32,9 @@ class CollectionWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     strutStyle: const StrutStyle(fontSize: 13.0),
                     text: TextSpan(
-                        style: const TextStyle(color: Colors.black, fontSize: 13),
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 13),
                         text: title),
                   ),
                 ),

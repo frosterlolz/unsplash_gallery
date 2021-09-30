@@ -259,6 +259,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Add to collection`
+  String get addToCollection {
+    return Intl.message(
+      'Add to collection',
+      name: 'addToCollection',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

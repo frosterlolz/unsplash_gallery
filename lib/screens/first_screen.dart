@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unsplash_gallery/data_provider.dart';
 import 'package:unsplash_gallery/generated/l10n.dart';
-import 'package:unsplash_gallery/res/colors.dart';
 import 'package:unsplash_gallery/screens/home.dart';
 import 'package:unsplash_gallery/screens/webview_page.dart';
 import 'package:unsplash_gallery/widgets/buttons/change_theme.dart';

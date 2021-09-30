@@ -6,39 +6,44 @@ import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/models/model.dart';
 import 'package:unsplash_gallery/res/colors.dart';
 import 'package:unsplash_gallery/screens/collection_screen.dart';
+import 'package:unsplash_gallery/screens/photo_screen.dart';
+import 'package:unsplash_gallery/widgets/buttons/change_theme.dart';
 import 'package:unsplash_gallery/widgets/collection_widget.dart';
 import 'package:unsplash_gallery/widgets/header_widget.dart';
 import 'package:unsplash_gallery/widgets/photo.dart';
 
-class MyProfilePage extends StatefulWidget {
-  const MyProfilePage({
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({
     Key? key,
-    required this.user
+    required this.user,
+    this.myProfile = false,
   }) : super(key: key);
 
   final Sponsor user;
+  final bool myProfile;
 
   @override
-  _MyProfilePageState createState() => _MyProfilePageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _MyProfilePageState extends State<MyProfilePage> {
+class _ProfilePageState extends State<ProfilePage> {
   final ScrollController _scrollController = ScrollController();
-  final ScrollController _horyzontalController = ScrollController();
-  int pageCount = 2;
-  int pageLikedCount = 2;
-  int pageCollectionsCount = 2;
-  bool isLoading = false;
-  bool isLoadingCol = false;
+  final ScrollController _horizontalController = ScrollController();
+  int pageCollectionsCount = 1;
+  int pageCount = 1;
+  int pageLikedCount = 1;
+  bool isLoading = false; // photos+LikedPhotos
+  bool isLoadingCol = false; // collections
   List<Photo> userPhotos = [];
-  List<Photo> likedPhotos = [];
-  List<Collection> collectionsList = [];
+  List<Photo> userLikedPhotos = [];
+  List<Collection> userColList = [];
   int currentTab = 0;
 
   @override
   void initState() {
-    init(widget.user.username!);
     super.initState();
+
+    init(widget.user.username!, pageCount, pageCollectionsCount, pageLikedCount);
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -51,9 +56,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
         }
       }
     });
-    _horyzontalController.addListener(() {
-      if (_horyzontalController.position.pixels >=
-          _horyzontalController.position.maxScrollExtent * 0.8) {
+    _horizontalController.addListener(() {
+      if (_horizontalController.position.pixels >=
+          _horizontalController.position.maxScrollExtent * 0.8) {
         _getCollectionsByUser(pageCollectionsCount);
       }
     });
@@ -61,8 +66,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   @override
   void dispose() {
-    _horyzontalController.dispose();
     _scrollController.dispose();
+    _horizontalController.dispose();
     super.dispose();
   }
 
@@ -70,13 +75,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
     Tab(
       icon: Icon(
         Icons.grid_on_sharp,
-        color: Colors.black,
+        // color: Colors.black,
       ),
     ),
     Tab(
       icon: Icon(
         FontAwesomeIcons.heart,
-        color: Colors.black,
+        // color: Colors.black,
       ),
     ),
   ];
@@ -96,15 +101,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
     decoration: const BoxDecoration(
       border: Border(
         bottom: BorderSide(
-          color: AppColors.mercury,
+          // color: AppColors.mercury,
         ),
       ),
     ),
     child: AppBar(
-      backgroundColor: AppColors.white,
       title: Text(widget.user.username ?? 'username Null',
         style: const TextStyle(
-          color: AppColors.black,
           fontWeight: FontWeight.w600,
           fontStyle: FontStyle.italic,
         ),
@@ -113,7 +116,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
       automaticallyImplyLeading: false,
       elevation: 0,
       actions: [
-        IconButton(icon: const Icon(Icons.menu, color: Colors.black,),
+        const ChangeTheme(),
+        IconButton(icon: const Icon(Icons.menu,
+          // color: Colors.black,
+        ),
           onPressed: () => _onButtonPressed(),)
       ],
     ),
@@ -138,7 +144,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 SliverList(
                     delegate: SliverChildListDelegate(
                         [
-                          _mainListBuilder(context, collectionsList),
+                          _mainListBuilder(context, userColList),
                         ]
                     )
                 ),
@@ -147,15 +153,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
             body: Column(
               children: <Widget>[
                 Material(
-                  color: Colors.white,
+                  // color: Colors.white,
                   child: TabBar(
-                    onTap: (index) async {
+                    onTap:(index) async { // why here was async...
                       setState(() {currentTab = index;});
                     },
-                    labelColor: Colors.black,
+                    // labelColor: Colors.black,
                     unselectedLabelColor: Colors.grey[400],
                     indicatorWeight: 1,
-                    indicatorColor: Colors.black,
+                    indicatorColor: Theme.of(context).primaryColor,
                     tabs: _tabs,
                   ),
                 ),
@@ -163,13 +169,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   child: TabBarView(
                     children: [
                       userPhotos.isEmpty
-                          ? Container(color: Colors.white,
+                          ? Container(
+                            color: Theme.of(context).canvasColor,
                             child: Center(child: Text(S.of(context).noPhotos),))
                           : _gallery(userPhotos),
-                      likedPhotos.isEmpty
-                          ? Container(color: Colors.white,
+                      userLikedPhotos.isEmpty
+                          ? Container(
+                            color: Theme.of(context).canvasColor,
                             child: Center(child: Text(S.of(context).noLikedPhotos),))
-                          : _gallery(likedPhotos),
+                          : _gallery(userLikedPhotos),
                       // Container(),
                     ],
                   ),
@@ -185,8 +193,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // TODO: попробовать изменить на isLoading чтобы была имитация загрузки и если коллекций нет - ...
         buildHeader(context, widget.user),
-        collections.isEmpty ? Container() :_buildSectionHeader(context),
+        // collections.isEmpty ? Container() :_buildSectionHeader(context),
         collections.isEmpty ? Container() :_buildCollectionsRow(context, collections),
       ],
     );
@@ -196,17 +205,23 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return Container(
       height: 85.0,
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      color: AppColors.white,
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 3),
+      decoration: BoxDecoration(color: Theme.of(context).canvasColor),
       child: ListView.builder(
         shrinkWrap: true,
-        controller: _horyzontalController,
+        controller: _horizontalController,
         scrollDirection: Axis.horizontal,
         itemCount: collections.length,
         itemBuilder: (context, int index) {
-          return collections.isEmpty
-              ? const CircularProgressIndicator()
-              : GestureDetector(
+          if (index == collections.length) {
+            return Center(
+              child: Opacity(
+                opacity: isLoading ? 1 : 0,
+                child: const CircularProgressIndicator(),
+              ),
+            );
+          }
+          return GestureDetector(
             onTap: (){ setState((){
               Navigator.push(
                   context,
@@ -214,7 +229,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       builder: (context) => CollectionListScreen(collections[index])
                   ));});},
             child: CollectionWidget(
-                photoLink: collections[index].coverPhoto!.urls!.small
+                // TODO: default image... may be gray font
+                photoLink: collections[index].coverPhoto?.urls?.small
                     ?? 'https://i.pinimg.com/originals/d8/42/e2/d842e2a8aecaffff34ae744a96896ac9.jpg',
                 title: collections[index].title ?? ''),
           );
@@ -225,7 +241,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Widget _gallery(List<Photo> photoList) => Scaffold(
     body: GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
       itemCount: photoList.length,
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
@@ -238,27 +254,31 @@ class _MyProfilePageState extends State<MyProfilePage> {
             ),
           );
         }
-        return BigPhoto(
-            photoLink: userPhotos[index].urls!.regular!,
-            radius: 0, tag: 'grid_${userPhotos[index].id}');
+        return GestureDetector(
+          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>PhotoPage(photo: photoList[index]))
+          );},
+          child: BigPhoto(
+              photoLink: photoList[index].urls!.regular!,
+              radius: 0, tag: 'grid_${photoList[index].id}'),
+        );
       },
     ),
   );
 
-  Container _buildSectionHeader(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            S.of(context).collections,
-          ),
-        ],
-      ),
-    );
-  }
+  // Container _buildSectionHeader(BuildContext context) {
+  //   return Container(
+  //     // color: Colors.white,
+  //     padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: <Widget>[
+  //         Text(
+  //           S.of(context).collections,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   void _onButtonPressed() {
     {
@@ -284,6 +304,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
             );
           });
     }
+  }
+
+  void init(String username, page, colPage, likedPage) async {
+    setState(() {
+      isLoading = true;
+      isLoadingCol = true;
+    });
+    PhotoList tempPhotosList = await DataProvider.getPhotoByUser(
+        username, page, 10);
+    CollectionList tempCollectionsList = await DataProvider.getCollectionsByUser(
+        username, colPage, 10);
+    PhotoList tempLikedPhotos = await DataProvider.getLikedPhotoByUser(
+        username, likedPage, 10);
+
+    setState(() {
+      pageCollectionsCount++;
+      pageCount++;
+      pageLikedCount++;
+      userPhotos.addAll(tempPhotosList.photos!);
+      userColList.addAll(tempCollectionsList.collections!);
+      userLikedPhotos.addAll(tempLikedPhotos.photos!);
+      isLoading = false;
+      isLoadingCol = false;
+    });
   }
 
   void clearCache() {
@@ -318,7 +362,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
       setState(() {
         isLoadingCol = false;
-        collectionsList.addAll(tempList.collections!);
+        userColList.addAll(tempList.collections!);
         pageCollectionsCount++;
       });
     }
@@ -333,30 +377,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
       setState(() {
         isLoading = false;
-        likedPhotos.addAll(tempList.photos!);
+        userLikedPhotos.addAll(tempList.photos!);
         pageLikedCount++;
       });
     }
-  }
-
-  void init(String username) async {
-    setState(() {
-      isLoading = true;
-      isLoadingCol = true;
-    });
-    PhotoList tempPhotosList = await DataProvider.getPhotoByUser(
-        username, 1, 10);
-    CollectionList tempCollectionsList = await DataProvider.getCollectionsByUser(
-        username, 1, 10);
-    PhotoList tempLikedPhotos = await DataProvider.getLikedPhotoByUser(
-        username, 1, 10);
-
-    setState(() {
-      isLoading = false;
-      isLoadingCol = false;
-      userPhotos.addAll(tempPhotosList.photos!);
-      collectionsList.addAll(tempCollectionsList.collections!);
-      likedPhotos.addAll(tempLikedPhotos.photos!);
-    });
   }
 }
