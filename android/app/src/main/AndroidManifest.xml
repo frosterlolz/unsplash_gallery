@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.frosterlolz.unsplash_gallery">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="unsplash_gallery"
         android:icon="@mipmap/ic_launcher">
