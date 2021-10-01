@@ -36,7 +36,7 @@ class Photo {
   //List<Null> categories;
   int? likes;
   bool? likedByUser;
-  //List<Null> currentUserCollections;
+  List<dynamic>? currentUserCollections;
   Sponsorship? sponsorship;
   Sponsor? user;
 
@@ -55,7 +55,7 @@ class Photo {
         //this.categories,
         this.likes,
         this.likedByUser,
-        //this.currentUserCollections,
+        this.currentUserCollections,
         this.sponsorship,
         this.user});
 
@@ -82,15 +82,12 @@ class Photo {
     // }
     likes = json['likes'];
     likedByUser = json['liked_by_user'] ?? false;
-    //был пустой объект, его генератор не смог обработать
-    //в этом примере он на мне нужен
-    //комментируем
-    // if (json['current_user_collections'] != null) {
-    //   currentUserCollections = new List<Null>();
-    //   json['current_user_collections'].forEach((v) {
-    //     currentUserCollections.add(new Null.fromJson(v));
-    //   });
-    // }
+    if (json['current_user_collections'] != null) {
+      currentUserCollections = <Collection>[];
+      json['current_user_collections'].forEach((v) {
+        currentUserCollections!.add(Collection.fromJson(v));
+      });
+    }
     sponsorship = json['sponsorship'] != null
         ? Sponsorship.fromJson(json['sponsorship'])
         : null;
@@ -125,10 +122,11 @@ class Photo {
     //был пустой объект, его генератор не смог обработать
     //в этом примере он на мне нужен
     //комментируем
-    // if (this.currentUserCollections != null) {
+    // if (currentUserCollections != null) {
     //   data['current_user_collections'] =
-    //       this.currentUserCollections.map((v) => v.toJson()).toList();
+    //       currentUserCollections?.map((v) => v.toJson()).toList();
     // }
+    data["current_user_collections"] = List<dynamic>.from(currentUserCollections!.map((x) => x.toJson()));
     if (sponsorship != null) {
       data['sponsorship'] = sponsorship!.toJson();
     }
@@ -383,6 +381,7 @@ class CollectionList {
       collections!.add(Collection.fromJson(value as Map<String, dynamic>));
     }
   }
+
   List<dynamic> toJson() {
     List<dynamic> result = <dynamic>[];
 

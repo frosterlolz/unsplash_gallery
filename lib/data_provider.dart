@@ -203,17 +203,23 @@ class DataProvider {
     }
   }
 
-  static Future addToCollection(colId, photoId) async { // на входе получаю одноразовый код
+  static Future addToCollection(colId, photoId, bool add) async { // на входе получаю одноразовый код
     Dio dio = Dio();
-    var response = await dio.post('https://api.unsplash.com/collections/$colId/add', // делаю POST запрос
+    var response = add
+        ? await dio.post('https://api.unsplash.com/collections/$colId/add',
         options: Options(
-          headers: {'Authorization': 'Bearer $authToken'}),
+            headers: {'Authorization': 'Bearer $authToken'}),
+        data:'{"collection_id": "$colId", "photo_id": "$photoId"}'
+    )
+        : await dio.delete('https://api.unsplash.com/collections/$colId/remove',
+        options: Options(
+            headers: {'Authorization': 'Bearer $authToken'}),
         data:'{"collection_id": "$colId", "photo_id": "$photoId"}'
     );
     if (response.statusCode! >= 200 && response.statusCode! < 300) {
       return response.statusCode;
     } else {
-      throw Exception('АШИБКАААА: ${response.statusMessage}');
+      throw Exception('Error: ${response.statusMessage}');
     }
   }
 }

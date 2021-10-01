@@ -33,11 +33,12 @@ class _PhotoPageState extends State<PhotoPage> {
   List<Collection> myColList = [];
   bool? isAdded;
   bool isLoading = false;
+  List<String> colIds = [];
 
   @override
   initState(){
     super.initState();
-
+    _containsColIdList();
     _getMyCollections(pageCollectionsCount);
     _colListController.addListener(() {
       if (_colListController.position.pixels >=
@@ -63,6 +64,10 @@ class _PhotoPageState extends State<PhotoPage> {
       ListTile(
         title: Center(child: Text(S.of(context).clearCache)),
         onTap: _clearCache,
+      ),
+      ListTile(
+        title: const Center(child: Text('TEST')),
+        onTap: _printData,
       ),
     ];
     return Scaffold(
@@ -228,6 +233,7 @@ class _PhotoPageState extends State<PhotoPage> {
     scrollDirection: Axis.vertical,
     shrinkWrap: true,
     itemBuilder: (context, index) {
+      bool condition = colIds.contains(myColList[index].id);
       if (index == myColList.length) {
         return Center(
           child: Opacity(
@@ -239,19 +245,23 @@ class _PhotoPageState extends State<PhotoPage> {
       return Column(
         children:[
           ListTile(
-              title: Center(child: Text( myColList[index].title ?? myColList[index].id! )),
+              title: Center(child: Text(condition
+                  ? '${myColList[index].title ?? myColList[index].id!} [Delete]'
+                  : myColList[index].title ?? myColList[index].id!
+              )),
               onTap: (){
                 Navigator.pop(context);
-                _addToCollection(myColList[index].id!, widget.photo.id);
-                // открывается прогрессбар
-              }),
-          const Divider(
-            thickness: 2,)
+                condition
+                ? setState(() {_addToCollection(myColList[index].id!, widget.photo.id, false);colIds.remove(myColList[index].id!);})
+                : setState(() {_addToCollection(myColList[index].id!, widget.photo.id, true);colIds.add(myColList[index].id!);});
+                },
+                ),
+          const Divider(thickness: 2),
         ],
       );},
   );
 
-  void _addToCollection(colId, photoId) async {
+  void _addToCollection(colId, photoId, bool add) async {
     if (!isLoading) {
       setState(() {
         isLoading = true;
@@ -278,13 +288,26 @@ class _PhotoPageState extends State<PhotoPage> {
       ),
       );
       overlayState!.insert(overlayEntry);
-      int statusCode = await DataProvider.addToCollection(colId, photoId);
+      int statusCode = await DataProvider.addToCollection(colId, photoId, add);
       overlayEntry.remove();
       setState(() {
         isLoading = false;
         statusCode >= 200 && statusCode < 300 ? isAdded = true : isAdded =
         false;
       });
+    }
+  }
+
+  void _printData() {
+    // print(widget.photo.currentUserCollections![0].id);
+    // print(myColList[1].id);
+    print(colIds);
+  }
+
+  void _containsColIdList() {
+    for (int i = 0; i<widget.photo.currentUserCollections!.length; i++){
+      colIds.add(widget.photo.currentUserCollections![i].id);
+      setState(() {});
     }
   }
 }
