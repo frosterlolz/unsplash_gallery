@@ -20,5 +20,7 @@
   "noInternet": "No internet connection",
   "noPhotos": "Your photo album is empty",
   "noLikedPhotos": "You have no liked photos",
-  "addToCollection": "Add to collection"
+  "addToCollection": "Add to collection",
+  "delete": "Delete",
+  "search": "Search"
 }

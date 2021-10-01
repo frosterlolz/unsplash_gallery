@@ -246,7 +246,7 @@ class _PhotoPageState extends State<PhotoPage> {
         children:[
           ListTile(
               title: Center(child: Text(condition
-                  ? '${myColList[index].title ?? myColList[index].id!} [Delete]'
+                  ? '${myColList[index].title ?? myColList[index].id!} [${S.of(context).delete}]'
                   : myColList[index].title ?? myColList[index].id!
               )),
               onTap: (){

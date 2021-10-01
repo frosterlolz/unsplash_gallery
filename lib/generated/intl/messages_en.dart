@@ -31,6 +31,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Default collection name"),
         "defaultDescription":
             MessageLookupByLibrary.simpleMessage("No description"),
+        "delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "downloadTitle":
             MessageLookupByLibrary.simpleMessage("Downloading photos"),
@@ -51,6 +52,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noPhotos":
             MessageLookupByLibrary.simpleMessage("Your photo album is empty"),
         "photos": MessageLookupByLibrary.simpleMessage("Photos"),
-        "save": MessageLookupByLibrary.simpleMessage("Save")
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "search": MessageLookupByLibrary.simpleMessage("Search")
       };
 }

@@ -26,6 +26,7 @@ class _FeedScreenState extends State<FeedScreen> {
   int pageCount = 1;
   bool isLoading = false;
   List<Photo> photoList = [];
+  Timer? debouncer;
 
   @override
   void initState() {
@@ -43,9 +44,21 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   void dispose() {
+    debouncer?.cancel();
     subscription!.cancel();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void debounce(
+      VoidCallback callback, {
+        Duration duration = const Duration(milliseconds: 1000),
+      }) {
+    if (debouncer != null) {
+      debouncer!.cancel();
+    }
+
+    debouncer = Timer(duration, callback);
   }
 
 
@@ -56,8 +69,9 @@ class _FeedScreenState extends State<FeedScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(S.of(context).mainTitle), centerTitle: false,
-        actions: const [
-          ChangeTheme(),
+        actions: [
+          _search(),
+          const ChangeTheme(),
         ],),
       body: _buildFeed(context, photoList),
     );
@@ -128,4 +142,63 @@ class _FeedScreenState extends State<FeedScreen> {
       });
     }
   }
+
+  Widget _search() {
+    return IconButton(
+      tooltip: S.of(context).search,
+      icon: const Icon(Icons.search),
+      onPressed: () {
+        showSearch(context: context, delegate: SearchPhoto());
+      },
+    );
+  }
+}
+
+class SearchPhoto extends SearchDelegate<Photo?>{
+  @override
+  List<Widget>? buildActions(BuildContext context) => [IconButton(
+    icon: const Icon(Icons.clear), onPressed: (){
+      query = '';
+  })];
+
+  @override
+  Widget? buildLeading(BuildContext context) => IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,),
+        onPressed: (){
+        close(context, null);
+        });
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // сюда запихаем то, что должно отобразиться при нажатии на резалт ниже
+    // TODO: implement buildResults
+    throw UnimplementedError();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestion = query.isEmpty
+        ? Center(child: Text('Preview'))
+        : Center(child: Text('Its too hart for me now('));
+
+    return suggestion; // we can add here ListView.builder
+  }
+
+  Future searchPhoto(String query) async => debounce(() async {
+
+    final data =
+    (query == ''
+        ? await DataProvider.getPhotos(pageCount, 10)
+        : await DataProvider.getSearchPhoto(query, pageCount, 10));
+
+    if (!mounted) return;
+
+    setState(() {
+      this.query = query;
+      this.data = data.photos!;
+    });
+  });
+
 }
