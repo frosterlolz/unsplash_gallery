@@ -6,7 +6,8 @@ import 'package:unsplash_gallery/data_provider.dart';
 import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/models/model.dart';
 import 'package:unsplash_gallery/res/colors.dart';
-import 'package:unsplash_gallery/screens/feed_screen.dart';
+import 'package:unsplash_gallery/screens/bottom_nav_bar/feed_and_search.dart';
+import 'package:unsplash_gallery/screens/bottom_nav_bar/profile.dart';
 import 'package:unsplash_gallery/widgets/bottom_nav_bar.dart';
 import 'package:unsplash_gallery/res/globals.dart' as globals;
 
@@ -20,11 +21,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Sponsor? user;
   int currentTab = 0;
+  bool isLoading = false;
+  List<Photo> photoList = [];
 
   @override
   void initState() {
     super.initState();
-    _getMyProfile();
+    _getData();
+    // _getMyProfile();
   }
 
   @override
@@ -61,9 +65,12 @@ class _MyHomePageState extends State<MyHomePage> {
       body: IndexedStack(
         index: currentTab,
         children: [
-          const FeedScreen(),
-          Container(),
-          Container(), // don't forget about value TRUE in MyProfile
+          PhotoSearch(photoList, isSearch: false),
+          // const FeedScreen(),
+          PhotoSearch(photoList, isSearch: true),
+          isLoading != true
+              ? ProfilePage(user: user!, myProfile: true)
+              : const Center(child: CircularProgressIndicator()),
           // const Center(child: ChangeTheme(),),
           // user == null ? const Center(child: CircularProgressIndicator()) : MyProfilePage(user: user!,),
           // isLoading != true ? PhotoListScreen(photoList) : Center(child: CircularProgressIndicator()),
@@ -76,7 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
         itemCornerRadius: 8,
         curve: Curves.ease, // animation
         onItemSelected: (index) async {
-          setState(() {currentTab = index;});
+          setState(() {
+            currentTab = index;
+          });
         },
         items: _tabs,
         currentTab: currentTab,
@@ -85,13 +94,29 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _getMyProfile() async {
-    var tempUser = await DataProvider.getMyProfile();
-    setState(() {
-      user = tempUser;
-      globals.gMyProfile = user;
-    });
+  // void _getMyProfile() async {
+  //   var tempUser = await DataProvider.getMyProfile();
+  //   setState(() {
+  //     user = tempUser;
+  //     globals.gMyProfile = user;
+  //   });
+  // }
+
+  void _getData() async {
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+      });
+
+      var tempUser = await DataProvider.getMyProfile();
+      PhotoList tempList = await DataProvider.getPhotos(1, 10);
+
+      setState(() {
+        user = tempUser;
+        globals.gMyProfile = user;
+        photoList.addAll(tempList.photos!);
+        isLoading = false;
+      });
+    }
   }
 }
-
-

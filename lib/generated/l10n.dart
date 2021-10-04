@@ -289,6 +289,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Photo`
+  String get photo {
+    return Intl.message(
+      'Photo',
+      name: 'photo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message(
+      'Settings',
+      name: 'settings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change theme`
+  String get changeTheme {
+    return Intl.message(
+      'Change theme',
+      name: 'changeTheme',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

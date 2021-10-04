@@ -20,7 +20,6 @@ class CollectionListScreenState extends State<CollectionListScreen> {
   bool isLoading = false;
   var photoList = <Photo>[];
 
-
   @override
   void initState() {
     super.initState();
@@ -43,31 +42,23 @@ class CollectionListScreenState extends State<CollectionListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.collection.title ?? S.of(context).defaultColName,
-            style: const TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 17
-            ),
-          ),
+        title: Text(
+          widget.collection.title ?? S.of(context).defaultColName,
+          style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 17),
+        ),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //       onPressed: (){},
-        //       icon: const Icon(Icons.add)
-        //   ),
-        // ],
       ),
       body: _buildListView(context, photoList),
     );
   }
 
   Widget _buildListView(BuildContext context, List<Photo> photoList) {
-    //TODO: переделать на SingleChildScrollView так, чтобы он занимал весь экран
     return GridView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: photoList.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+      gridDelegate:
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
       controller: _scrollController,
       itemBuilder: (context, i) {
         if (i == photoList.length) {
@@ -78,15 +69,23 @@ class CollectionListScreenState extends State<CollectionListScreen> {
             ),
           );
         }
-        return _buildPhoto(photoList[i]);
+        return isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _buildPhoto(photoList[i]);
       },
     );
   }
 
   Widget _buildPhoto(Photo photo) {
     return GestureDetector(
-      onTap: (){_onBigPhotoTap(context, photo);},
-      child: BigPhoto(photoLink: photo.urls!.regular!, tag: 'colItem_${photo.id}', radius: 0,),
+      onTap: () {
+        _onBigPhotoTap(context, photo);
+      },
+      child: BigPhoto(
+        photoLink: photo.urls!.regular!,
+        tag: 'colItem_${photo.id}',
+        radius: 0,
+      ),
     );
   }
 
@@ -105,8 +104,8 @@ class CollectionListScreenState extends State<CollectionListScreen> {
     }
   }
 
-  void _onBigPhotoTap(context, photo){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>PhotoPage(photo: photo))
-    );
+  void _onBigPhotoTap(context, photo) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => PhotoPage(photo: photo)));
   }
 }

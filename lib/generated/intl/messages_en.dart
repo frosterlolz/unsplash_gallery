@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "addToCollection":
             MessageLookupByLibrary.simpleMessage("Add to collection"),
         "authorization": MessageLookupByLibrary.simpleMessage("Authorization"),
+        "changeTheme": MessageLookupByLibrary.simpleMessage("Change theme"),
         "clearCache": MessageLookupByLibrary.simpleMessage("Clear cache"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
         "collections": MessageLookupByLibrary.simpleMessage("Collections"),
@@ -51,8 +52,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("You have no liked photos"),
         "noPhotos":
             MessageLookupByLibrary.simpleMessage("Your photo album is empty"),
+        "photo": MessageLookupByLibrary.simpleMessage("Photo"),
         "photos": MessageLookupByLibrary.simpleMessage("Photos"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
-        "search": MessageLookupByLibrary.simpleMessage("Search")
+        "search": MessageLookupByLibrary.simpleMessage("Search"),
+        "settings": MessageLookupByLibrary.simpleMessage("Settings")
       };
 }

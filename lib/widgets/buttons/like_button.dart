@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:unsplash_gallery/data_provider.dart';
 
-
 class LikeButton extends StatefulWidget {
-  const LikeButton(this.isLiked, this.likeCount, this.id, {Key? key}) : super(key: key);
+  const LikeButton(this.isLiked, this.likeCount, this.id, {Key? key})
+      : super(key: key);
 
   final int likeCount;
   final bool isLiked;
@@ -41,11 +41,19 @@ class _LikeButtonState extends State<LikeButton> {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(8),
-          child: Row(children: <Widget>[
-            Icon(isLiked? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart),
-            const SizedBox(width: 4.21,),
-            Text(likeCount.toString(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          ],),
+          child: Row(
+            children: <Widget>[
+              Icon(isLiked
+                  ? FontAwesomeIcons.solidHeart
+                  : FontAwesomeIcons.heart),
+              const SizedBox(
+                width: 4.21,
+              ),
+              Text(likeCount.toString(),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w600)),
+            ],
+          ),
         ),
       ),
     );

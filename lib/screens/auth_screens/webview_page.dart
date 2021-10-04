@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../data_provider.dart';
+import '../../data_provider.dart';
 
 class WebViewPage extends StatefulWidget {
   const WebViewPage({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class WebViewPage extends StatefulWidget {
 
 class _WebViewPageState extends State<WebViewPage> {
   final Completer<WebViewController> _controller =
-  Completer<WebViewController>();
+      Completer<WebViewController>();
   bool isLoading = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 

@@ -61,7 +61,8 @@ Container buildHeader(BuildContext context, Sponsor? user) {
                             textAlign: TextAlign.center,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(S.of(context).collections.toUpperCase(),
+                          subtitle: Text(
+                              S.of(context).collections.toUpperCase(),
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 12.0)),
                         ),
@@ -82,10 +83,9 @@ Container buildHeader(BuildContext context, Sponsor? user) {
               child: CircleAvatar(
                 radius: 40.0,
                 backgroundImage: CachedNetworkImageProvider(
-                  user?.profileImage?.medium
-                    ?? 'https://i.pinimg.com/originals/d8/42/e2/d842e2a8aecaffff34ae744a96896ac9.jpg',
-                cacheKey: UniqueKey().toString()
-                ),
+                    user?.profileImage?.medium ??
+                        'https://i.pinimg.com/originals/d8/42/e2/d842e2a8aecaffff34ae744a96896ac9.jpg',
+                    cacheKey: UniqueKey().toString()),
               ),
             ),
           ],
@@ -102,10 +102,13 @@ Widget buildSocials(Sponsor? user) {
       const SizedBox(width: 20.0),
       IconButton(
         color: Colors.indigo,
-        icon: const Icon(FontAwesomeIcons.instagram,),
+        icon: const Icon(
+          FontAwesomeIcons.instagram,
+        ),
         onPressed: () {
           if (user?.instagramUsername != null) {
-            _launchURL("https://www.instagram.com/${user!.instagramUsername}");}
+            _launchURL("https://www.instagram.com/${user!.instagramUsername}");
+          }
         },
       ),
       const SizedBox(width: 5.0),
@@ -113,8 +116,9 @@ Widget buildSocials(Sponsor? user) {
         color: Colors.indigo,
         icon: const Icon(FontAwesomeIcons.twitter),
         onPressed: () {
-          if(user?.twitterUsername != null){
-            _launchURL("https://twitter.com/${user!.twitterUsername}");}
+          if (user?.twitterUsername != null) {
+            _launchURL("https://twitter.com/${user!.twitterUsername}");
+          }
         },
       ),
       const SizedBox(width: 10.0),

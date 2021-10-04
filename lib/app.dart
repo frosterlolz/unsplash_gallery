@@ -1,6 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:unsplash_gallery/screens/first_screen.dart';
+import 'package:unsplash_gallery/screens/auth_screens/first_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:unsplash_gallery/themes.dart';
 
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       initial: AdaptiveThemeMode.light,
       light: kLightTheme,
       dark: kDarkTheme,
-      builder:(theme, darkTheme) => MaterialApp(
+      builder: (theme, darkTheme) => MaterialApp(
         theme: theme,
         darkTheme: darkTheme,
         localizationsDelegates: const [

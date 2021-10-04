@@ -22,5 +22,8 @@
   "noLikedPhotos": "You have no liked photos",
   "addToCollection": "Add to collection",
   "delete": "Delete",
-  "search": "Search"
+  "search": "Search",
+  "photo": "Photo",
+  "settings": "Settings",
+  "changeTheme": "Change theme"
 }

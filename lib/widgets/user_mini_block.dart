@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:unsplash_gallery/models/model.dart';
-import 'package:unsplash_gallery/screens/profile.dart';
+import 'package:unsplash_gallery/screens/bottom_nav_bar/profile.dart';
 import 'package:unsplash_gallery/widgets/buttons/like_button.dart';
 import 'package:unsplash_gallery/widgets/user_avatar.dart';
-
 
 class DetailedBlock extends StatefulWidget {
   final Photo _photo;
   final bool likeButton;
 
-  const DetailedBlock(this._photo, {this.likeButton = false, Key? key}) : super(key:key);
+  const DetailedBlock(this._photo, {this.likeButton = false, Key? key})
+      : super(key: key);
 
   @override
   DetailedBlockState createState() => DetailedBlockState();
 }
 
-class DetailedBlockState extends State<DetailedBlock> with TickerProviderStateMixin {
-
+class DetailedBlockState extends State<DetailedBlock>
+    with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -31,21 +31,21 @@ class DetailedBlockState extends State<DetailedBlock> with TickerProviderStateMi
   Widget build(BuildContext context) {
     Photo? photo = widget._photo;
     bool _likeButton = widget.likeButton;
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-        children: [
-          GestureDetector(onTap: (){
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      GestureDetector(
+          onTap: () {
             setState(() {
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context)=>ProfilePage(user: photo.user!)));
-            });},
-              child: detailedBlock(photo)
-          ),
-          _likeButton ? LikeButton(photo.likedByUser!, photo.likes!, photo.id!) : Container(),
-        ]
-    );
+                  MaterialPageRoute(
+                      builder: (context) => ProfilePage(user: photo.user!)));
+            });
+          },
+          child: detailedBlock(photo)),
+      _likeButton
+          ? LikeButton(photo.likedByUser!, photo.likes!, photo.id!)
+          : Container(),
+    ]);
   }
 
   Widget detailedBlock(Photo photo) {
@@ -66,7 +66,8 @@ class DetailedBlockState extends State<DetailedBlock> with TickerProviderStateMi
                     photo.user!.name!,
                     // style: AppStyles.h2Black,
                   ),
-                  Text('@${photo.user!.username!}',
+                  Text(
+                    '@${photo.user!.username!}',
                     // style: AppStyles.h5Black.copyWith(color: AppColors.manatee),
                   )
                 ],
