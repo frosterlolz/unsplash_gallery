@@ -5,11 +5,12 @@ import 'package:unsplash_gallery/widgets/about_widget.dart';
 import 'package:unsplash_gallery/widgets/photo.dart';
 import 'package:unsplash_gallery/widgets/user_mini_block.dart';
 
-Widget buildPhotoPost(context, Photo photo) {
+Widget buildPhotoPost(context, Photo photo, bool isSearch) {
   return SingleChildScrollView(
-    child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      GestureDetector(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        GestureDetector(
           onTap: () {
             Navigator.push(
                 context,
@@ -17,9 +18,20 @@ Widget buildPhotoPost(context, Photo photo) {
                     builder: (context) => PhotoPage(photo: photo)));
           },
           child: BigPhoto(
-              photoLink: photo.urls!.regular!, tag: photo.id!, radius: 17)),
-      DetailedBlock(photo, likeButton: true),
-      buildAbout(photo, context),
-    ]),
+            photoLink: photo.urls!.regular!,
+            tag: isSearch ? 'search_${photo.id!}' : 'feed_${photo.id!}',
+            radius: 17,
+          ),
+        ),
+        DetailedBlock(
+          photo,
+          likeButton: true,
+        ),
+        buildAbout(
+          photo,
+          context,
+        ),
+      ],
+    ),
   );
 }

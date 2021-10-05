@@ -21,9 +21,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "about": MessageLookupByLibrary.simpleMessage("About me"),
         "addToCollection":
             MessageLookupByLibrary.simpleMessage("Add to collection"),
         "authorization": MessageLookupByLibrary.simpleMessage("Authorization"),
+        "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "changeTheme": MessageLookupByLibrary.simpleMessage("Change theme"),
         "clearCache": MessageLookupByLibrary.simpleMessage("Clear cache"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
@@ -38,11 +40,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Downloading photos"),
         "downloadingSure": MessageLookupByLibrary.simpleMessage(
             "Are u sure, u want to download a photo?"),
+        "email": MessageLookupByLibrary.simpleMessage("Email"),
+        "first": MessageLookupByLibrary.simpleMessage("First"),
         "haveInternet": MessageLookupByLibrary.simpleMessage(
             "Internet connection established"),
+        "instagram": MessageLookupByLibrary.simpleMessage("Instagram"),
+        "last": MessageLookupByLibrary.simpleMessage("Last"),
         "likes": MessageLookupByLibrary.simpleMessage("Likes"),
         "logIn": MessageLookupByLibrary.simpleMessage("Log in"),
         "mainTitle": MessageLookupByLibrary.simpleMessage("Unsplash Gallery"),
+        "name": MessageLookupByLibrary.simpleMessage("Name"),
         "navBarItemOne": MessageLookupByLibrary.simpleMessage("Feed"),
         "navBarItemThree": MessageLookupByLibrary.simpleMessage("User"),
         "navBarItemTwo": MessageLookupByLibrary.simpleMessage("Search"),
@@ -56,6 +63,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "photos": MessageLookupByLibrary.simpleMessage("Photos"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
-        "settings": MessageLookupByLibrary.simpleMessage("Settings")
+        "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "twitter": MessageLookupByLibrary.simpleMessage("Twitter"),
+        "username": MessageLookupByLibrary.simpleMessage("Username")
       };
 }

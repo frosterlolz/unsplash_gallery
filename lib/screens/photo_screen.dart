@@ -107,7 +107,7 @@ class _PhotoPageState extends State<PhotoPage> {
             },
             child: BigPhoto(
               photoLink: photo.urls!.regular!,
-              tag: photo.id,
+              tag: 'photo_screen ${photo.id}',
               radius: 17,
             )),
         Padding(

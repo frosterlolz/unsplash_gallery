@@ -87,7 +87,11 @@ class _PhotoSearchState extends State<PhotoSearch> {
           }
           return Column(
             children: <Widget>[
-              buildPhotoPost(context, photoList[index]),
+              buildPhotoPost(
+                context,
+                photoList[index],
+                widget.isSearch,
+              ),
               const Divider(thickness: 2),
             ],
           );

@@ -230,6 +230,7 @@ class Sponsor {
   String? portfolioUrl;
   String? bio;
   String? location;
+  String? email;
   Links? links;
   ProfileImage? profileImage;
   String? instagramUsername;
@@ -249,6 +250,7 @@ class Sponsor {
         this.portfolioUrl,
         this.bio,
         this.location,
+        this.email,
         this.links,
         this.profileImage,
         this.instagramUsername,
@@ -268,6 +270,7 @@ class Sponsor {
     portfolioUrl = json['portfolio_url'];
     bio = json['bio'];
     location = json['location'];
+    email = json['email'];
     links = json['links'] != null ? Links.fromJson(json['links']) : null;
     profileImage = json['profile_image'] != null
         ? ProfileImage.fromJson(json['profile_image'])
@@ -291,6 +294,7 @@ class Sponsor {
     data['portfolio_url'] = portfolioUrl;
     data['bio'] = bio;
     data['location'] = location;
+    data['email'] = email;
     if (links != null) {
       data['links'] = links!.toJson();
     }

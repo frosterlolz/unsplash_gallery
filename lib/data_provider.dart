@@ -1,5 +1,4 @@
 import 'dart:convert'; // здесь содержатся кодеры/декодеры для JSON
-
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:unsplash_gallery/models/auth/model.dart';
@@ -26,14 +25,14 @@ class DataProvider {
   static const String baseUrl = '';
 
   // static const String _appId = "261112"; //not used, just for info
-  static String authToken = '';
-  // "ZjPc-BWcEgllcCHccQmYrtUCLML5538oEOWQPV_zaLQ";
+  // TOKEN HERE
+  static String authToken = 'H-DjvpLCdk_HjpyYJKP2Z3Af8NMYOmGCc3QZCdciCSI';
   static const String _accessKey =
       'ZO8jyGxChpxOQJr2JC41DHOkNnQLDW3_2OpN-Wsir08'; //app access key from console
   static const String _secretKey =
       'LxTDPoMfhxvH6mMqKPLTXX2yMn1dW1aUx6Kpl6EoamQ'; //app secrey key from console
   static const String authUrl =
-      'https://unsplash.com/oauth/authorize?client_id=$_accessKey&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=public+write_likes+write_collections'; //authorize url from https://unsplash.com/oauth/applications/{your_app_id}
+      'https://unsplash.com/oauth/authorize?client_id=$_accessKey&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=public+write_likes+write_collections+read_photos+write_photos'; //authorize url from https://unsplash.com/oauth/applications/{your_app_id}
 
   // авторизация
   static Future<Auth> doLogin({String? oneTimeCode}) async {
@@ -233,6 +232,20 @@ class DataProvider {
         : await dio.delete('https://api.unsplash.com/collections/$colId/remove',
             options: Options(headers: {'Authorization': 'Bearer $authToken'}),
             data: '{"collection_id": "$colId", "photo_id": "$photoId"}');
+    if (response.statusCode! >= 200 && response.statusCode! < 300) {
+      return response.statusCode;
+    } else {
+      throw Exception('Error: ${response.statusMessage}');
+    }
+  }
+
+  static Future updateProfile(String username, String fName, String lName,
+      String email, String bio, String instagram) async {
+    Dio dio = Dio();
+    var response = await dio.put('https://api.unsplash.com/me',
+        options: Options(headers: {'Authorization': 'Bearer $authToken'}),
+        data:
+            '{"username": "$username","first_name": "$fName","last_name": "$lName","email": "$email","instagram_username": "$instagram","bio": "$bio"}');
     if (response.statusCode! >= 200 && response.statusCode! < 300) {
       return response.statusCode;
     } else {

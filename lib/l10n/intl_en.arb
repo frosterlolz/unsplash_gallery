@@ -25,5 +25,14 @@
   "search": "Search",
   "photo": "Photo",
   "settings": "Settings",
-  "changeTheme": "Change theme"
+  "changeTheme": "Change theme",
+  "cancel": "Cancel",
+  "first": "First",
+  "last": "Last",
+  "name": "Name",
+  "instagram": "Instagram",
+  "about": "About me",
+  "email": "Email",
+  "username": "Username",
+  "twitter": "Twitter"
 }
