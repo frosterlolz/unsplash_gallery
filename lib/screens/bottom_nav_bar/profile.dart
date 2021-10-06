@@ -1,3 +1,4 @@
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -11,6 +12,7 @@ import 'package:unsplash_gallery/widgets/buttons/change_theme.dart';
 import 'package:unsplash_gallery/widgets/collection_widget.dart';
 import 'package:unsplash_gallery/widgets/header_widget.dart';
 import 'package:unsplash_gallery/widgets/photo.dart';
+import 'package:unsplash_gallery/widgets/text_field_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({
@@ -38,6 +40,10 @@ class _ProfilePageState extends State<ProfilePage> {
   List<Photo> userLikedPhotos = [];
   List<Collection> userColList = [];
   int currentTab = 0;
+  String title = '';
+  String description = '';
+  bool _isPrivate = false;
+  // late Collection collection;
 
   @override
   void initState() {
@@ -90,39 +96,65 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) => Builder(
         builder: (context) => Scaffold(
+            endDrawer: Container(
+              width: MediaQuery.of(context).size.width * 0.70,
+              margin: EdgeInsets.only(top: 60),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(25)),
+
+                child: Drawer(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                      children: [
+                        ListTile(title: Text(widget.user.name!, style: TextStyle(fontSize: 18),)),
+                        Divider(thickness: 1.0,),
+                        ListTile(title: Row(children:[Icon(Icons.cached_outlined), SizedBox(width: 10,) ,Text(S.of(context).clearCache)])),
+                      ],
+                    ),
+                      Column(children: [Divider(thickness: 1.0,),Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            // TODO: u know what to do)
+                              onPressed: (){},
+                              icon: Icon(Icons.lightbulb))
+                        ],
+                      )])
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            endDrawerEnableOpenDragGesture: false,
             appBar: PreferredSize(
                 preferredSize: const Size.fromHeight(40),
                 child: _buildAppBar()),
             body: _buildTabController()),
       );
 
-  Widget _buildAppBar() => Container(
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(),
+  Widget _buildAppBar() => AppBar(
+        title: Text(
+          // TODO: change this
+          widget.user.username ?? 'username Null',
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontStyle: FontStyle.italic,
           ),
         ),
-        child: AppBar(
-          title: Text(
-            // TODO: change this
-            widget.user.username ?? 'username Null',
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          centerTitle: false,
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.settings,
-              ),
-              onPressed: () => _onButtonPressed(),
-            )
-          ],
-        ),
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(
+        //       Icons.settings,
+        //     ),
+        //     onPressed: () =>
+        //         // _onButtonPressed(),
+        //   )
+        // ],
       );
 
   Widget _buildTabController() => DefaultTabController(
@@ -132,8 +164,9 @@ class _ProfilePageState extends State<ProfilePage> {
             Container(
               height: 200.0,
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [AppColors.dodgerBlue, AppColors.alto]),
+                gradient: RadialGradient(
+                    radius: 1.5,
+                    colors: [AppColors.alto, AppColors.dodgerBlue]),
               ),
             ),
             NestedScrollView(
@@ -149,11 +182,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 body: Column(
                   children: <Widget>[
                     Material(
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       child: TabBar(
                         onTap: (index) => setState(() {
                           currentTab = index;
                         }),
-                        labelColor: Theme.of(context).primaryColor,
                         indicatorWeight: 1,
                         indicatorColor: Theme.of(context).primaryColor,
                         tabs: _tabs,
@@ -163,18 +196,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: TabBarView(
                         children: [
                           userPhotos.isEmpty
-                              ? Container(
-                                  color: Theme.of(context).canvasColor,
-                                  child: Center(
-                                    child: Text(S.of(context).noPhotos),
-                                  ))
+                              ? Center(
+                                  child: Text(S.of(context).noPhotos),
+                                )
                               : _gallery(userPhotos),
                           userLikedPhotos.isEmpty
-                              ? Container(
-                                  color: Theme.of(context).canvasColor,
-                                  child: Center(
-                                    child: Text(S.of(context).noLikedPhotos),
-                                  ))
+                              ? Center(
+                                  child: Text(S.of(context).noLikedPhotos),
+                                )
                               : _gallery(userLikedPhotos),
                           // Container(),
                         ],
@@ -201,41 +230,153 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildCollectionsRow(context, List<Collection> collections) {
     return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
       height: 85.0,
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.only(left: 10, right: 10, top: 3),
-      decoration: BoxDecoration(color: Theme.of(context).canvasColor),
-      child: ListView.builder(
-        shrinkWrap: true,
-        controller: _horizontalController,
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        itemCount: collections.length,
-        itemBuilder: (context, int index) {
-          if (index == collections.length) {
-            return Center(
-              child: Opacity(
-                opacity: isLoading ? 1 : 0,
-                child: const CircularProgressIndicator(),
-              ),
-            );
-          }
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            CollectionListScreen(collections[index])));
-              });
-            },
-            child: CollectionWidget(
-                // TODO: default image... may be gray font
-                photoLink: collections[index].coverPhoto?.urls?.small ??
-                    'https://i.pinimg.com/originals/d8/42/e2/d842e2a8aecaffff34ae744a96896ac9.jpg',
-                title: collections[index].title ?? ''),
-          );
-        },
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text(S.of(context).addCollection),
+                        content: StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter setState) =>
+                                  SizedBox(
+                            height: MediaQuery.of(context).size.height - 650,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                TextFieldWidget(
+                                  text: '',
+                                  label: S.of(context).title,
+                                  onChanged: (value) {
+                                    title = value;
+                                  },
+                                ),
+                                TextFieldWidget(
+                                  onChanged: (value) {
+                                    description = value;
+                                  },
+                                  text: '',
+                                  label: S.of(context).description,
+                                ),
+                                SwitchListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  title: Text(S.of(context).privateCollection),
+                                  subtitle: Text(_isPrivate
+                                      ? S.of(context).yes
+                                      : S.of(context).no),
+                                  value: _isPrivate,
+                                  onChanged: (bool value) {
+                                    setState(() {
+                                      _isPrivate = value;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            child: Text(S.of(context).create),
+                            onPressed: () async {
+                              // Navigator.of(context).pop();
+                              OverlayState? overlayState = Overlay.of(context);
+                              OverlayEntry overlayEntry = OverlayEntry(
+                                builder: (context) => Positioned(
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      width: MediaQuery.of(context)
+                                          .size
+                                          .width, // получаем width всего экрана
+                                      child: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            16, 16, 16, 16),
+                                        decoration: BoxDecoration(
+                                          // color: Theme.of(context).primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child:
+                                            const CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                              overlayState!.insert(overlayEntry);
+                              var tempCollection =
+                                  await DataProvider.addCollection(
+                                      title: title,
+                                      description: description,
+                                      private: _isPrivate);
+                              Collection collection = tempCollection;
+                              overlayEntry.remove();
+                              Navigator.pop(context);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CollectionListScreen(collection)));
+                            },
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(S.of(context).cancel))
+                        ],
+                      )),
+              child: const CollectionWidget(photoLink: '', title: 'Add'),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              controller: _horizontalController,
+              scrollDirection: Axis.horizontal,
+              itemCount: collections.length,
+              itemBuilder: (context, int index) {
+                if (index == collections.length) {
+                  return Center(
+                    child: Opacity(
+                      opacity: isLoading ? 1 : 0,
+                      child: const CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                return GestureDetector(
+                  onLongPress: () {
+                    // TODO: delete collection and delete from array
+                    print('1');
+                  },
+                  onTap: () {
+                    setState(() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  CollectionListScreen(collections[index])));
+                    });
+                  },
+                  child: CollectionWidget(
+                      // TODO: default image... may be gray font
+                      photoLink: collections[index].coverPhoto?.urls?.small ??
+                          'https://i.pinimg.com/originals/d8/42/e2/d842e2a8aecaffff34ae744a96896ac9.jpg',
+                      title: collections[index].title ?? ''),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -261,8 +402,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            PhotoPage(photo: photoList[index])));
+                        builder: (context) => PhotoPage(
+                            photo: photoList[index],
+                            tag: widget.myProfile
+                                ? 'mine_${photoList[index].id}'
+                                : 'general_${photoList[index].id}')));
               },
               child: BigPhoto(
                   photoLink: photoList[index].urls!.regular!,
@@ -276,38 +420,59 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
   void _onButtonPressed() {
-    {
-      showModalBottomSheet(
-          isScrollControlled: true,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          )),
-          context: context,
-          builder: (context) {
-            return SafeArea(
-              child: Wrap(
-                // совместно с isScrollControlled позволяет контролировать высотку ботом шита
-                children: <Widget>[
-                  ListTile(
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(S.of(context).changeTheme),
-                        const ChangeTheme(),
-                      ],),
-                    onTap: (){},
-                  ),
-                  ListTile(
-                    title: Text(S.of(context).clearCache),
-                    onTap: clearCache,
-                  ),
+    showAdaptiveActionSheet(
+        context: context,
+        actions: [
+          BottomSheetAction(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(S.of(context).changeTheme),
+                  const ChangeTheme(),
                 ],
               ),
-            );
-          });
-    }
+              onPressed: () {}),
+          BottomSheetAction(
+            title: Text(S.of(context).clearCache),
+            onPressed: clearCache,
+          ),
+        ],
+        cancelAction: CancelAction(title: Text(S.of(context).cancel)));
+
+    // showModalBottomSheet(
+    //   constraints: BoxConstraints.tightFor(width: MediaQuery.of(context).size.width - 30),
+    //     isScrollControlled: true,
+    //     shape: const RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.only(
+    //       topLeft: Radius.circular(25),
+    //       topRight: Radius.circular(25),
+    //     )),
+    //     context: context,
+    //     builder: (context) {
+    //       return SafeArea(
+    //         child: Wrap(
+    //           // совместно с isScrollControlled позволяет контролировать высотку ботом шита
+    //           children: <Widget>[
+    //             ListTile(
+    //               title: Row(
+    //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                 children: [
+    //                   Text(S.of(context).changeTheme),
+    //                   const ChangeTheme(),
+    //                 ],
+    //               ),
+    //               onTap: () {},
+    //             ),
+    //             Divider(),
+    //             ListTile(
+    //               title: Text(S.of(context).clearCache),
+    //               onTap: clearCache,
+    //             ),
+    //             Divider(),
+    //           ],
+    //         ),
+    //       );
+    //     });
   }
 
   void init(String username, page, colPage, likedPage) async {

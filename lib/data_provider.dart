@@ -22,8 +22,7 @@ import 'package:unsplash_gallery/models/model.dart'; // для выполнен�
 */
 
 class DataProvider {
-  static const String baseUrl = '';
-
+  static Dio dio = Dio();
   // static const String _appId = "261112"; //not used, just for info
   // TOKEN HERE
   static String authToken = 'H-DjvpLCdk_HjpyYJKP2Z3Af8NMYOmGCc3QZCdciCSI';
@@ -37,7 +36,7 @@ class DataProvider {
   // авторизация
   static Future<Auth> doLogin({String? oneTimeCode}) async {
     // на входе получаю одноразовый код
-    Dio dio = Dio();
+    // Dio dio = Dio();
     var response = await dio.post(
         'https://unsplash.com/oauth/token', // делаю POST запрос
         options: Options(
@@ -49,7 +48,7 @@ class DataProvider {
             '{"client_id":"$_accessKey","client_secret":"$_secretKey","redirect_uri":"urn:ietf:wg:oauth:2.0:oob","code":"$oneTimeCode","grant_type":"authorization_code"}');
     // далее необходимо ответ преобразовать в экземпляр созданного класса (в д. случае Auth)
     if (response.statusCode! >= 200 && response.statusCode! < 300) {
-      print(response.data);
+      // print(response.data);
       return Auth.fromJson(response.data);
     } else {
       throw Exception('Error: ${response.statusMessage}');
@@ -58,7 +57,6 @@ class DataProvider {
 
   // получить рандомное фото
   static Future<Photo> getRandomPhoto() async {
-    Dio dio = Dio();
     dio.options.baseUrl = 'https://api.unsplash.com';
     var response = await dio.get('/photos/random',
         options: Options(headers: {'Authorization': 'Bearer $authToken'}));
@@ -72,7 +70,6 @@ class DataProvider {
 
   // лайкнуть фото
   static Future<bool> likePhoto(String photoId) async {
-    Dio dio = Dio();
     var response =
         await dio.post('https://api.unsplash.com/photos/$photoId/like',
             options: Options(headers: {
@@ -101,7 +98,6 @@ class DataProvider {
   }
 
   static Future<bool> isLikePhoto(String photoId, bool isLike) async {
-    Dio dio = Dio();
     var response = isLike
         ? await dio.post(
             'https://api.unsplash.com/photos/$photoId/like',
@@ -125,7 +121,6 @@ class DataProvider {
 
   // получить фото
   static Future<PhotoList> getPhotos(int page, int perPage) async {
-    Dio dio = Dio();
     var response = await dio.get(
       'https://api.unsplash.com/photos?page=$page&per_page=$perPage',
       options: Options(headers: {'Authorization': 'Bearer $authToken'}),
@@ -198,13 +193,13 @@ class DataProvider {
   }
 
   static Future<Sponsor> getMyProfile() async {
-    var response = await http.get(Uri.parse('https://api.unsplash.com/me'),
-        headers: {'Authorization': 'Bearer $authToken'});
+    var response = await dio.get('https://api.unsplash.com/me',
+        options: Options(headers: {'Authorization': 'Bearer $authToken'}));
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return Sponsor.fromJson(json.decode(response.body));
+    if (response.statusCode! >= 200 && response.statusCode! < 300) {
+      return Sponsor.fromJson(response.data);
     } else {
-      throw Exception('Error: ${response.reasonPhrase}');
+      throw Exception('Error: ${response.statusMessage}');
     }
   }
 
@@ -222,9 +217,20 @@ class DataProvider {
     }
   }
 
+  static Future<Collection> addCollection(
+      {required String title, String description = '', bool private = false}) async {
+    var response = await dio.post('https://api.unsplash.com/collections/',
+        options: Options(headers: {'Authorization': 'Bearer $authToken'}),
+        data: '{"title": "$title", "description": "$description", "private": "$private"}');
+    if (response.statusCode! >= 200 && response.statusCode! < 300) {
+      return Collection.fromJson(response.data);
+    } else {
+      throw Exception('Error: ${response.statusMessage}');
+    }
+  }
+
   static Future addToCollection(colId, photoId, bool add) async {
     // на входе получаю одноразовый код
-    Dio dio = Dio();
     var response = add
         ? await dio.post('https://api.unsplash.com/collections/$colId/add',
             options: Options(headers: {'Authorization': 'Bearer $authToken'}),
@@ -239,9 +245,18 @@ class DataProvider {
     }
   }
 
+  static Future deleteCollection(String id) async {
+    var response = await dio.delete('https://api.unsplash.com/collections/$id',
+        options: Options(headers: {'Authorization': 'Bearer $authToken'}));
+    if (response.statusCode! >= 200 && response.statusCode! < 300) {
+      return response.statusCode;
+    } else {
+      throw Exception('Error: ${response.statusMessage}');
+    }
+  }
+
   static Future updateProfile(String username, String fName, String lName,
       String email, String bio, String instagram) async {
-    Dio dio = Dio();
     var response = await dio.put('https://api.unsplash.com/me',
         options: Options(headers: {'Authorization': 'Bearer $authToken'}),
         data:

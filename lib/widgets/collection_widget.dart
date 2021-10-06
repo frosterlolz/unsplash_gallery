@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unsplash_gallery/res/colors.dart';
 
 class CollectionWidget extends StatelessWidget {
   const CollectionWidget(
@@ -15,13 +16,15 @@ class CollectionWidget extends StatelessWidget {
           child: Column(children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: Colors.grey,
+              backgroundColor: AppColors.grayChateau,
               child: Padding(
                 padding: const EdgeInsets.all(2.0),
                 child: CircleAvatar(
+                  child: photoLink.isEmpty ? Icon(Icons.add, size: 35, color: Theme.of(context).primaryColor,) : null,
+                  backgroundColor: Theme.of(context).canvasColor, // gray/black
                     key: UniqueKey(),
                     radius: 28,
-                    backgroundImage: NetworkImage(photoLink)),
+                    backgroundImage: photoLink.isEmpty ? null : NetworkImage(photoLink),),
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 4)),

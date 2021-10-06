@@ -13,6 +13,12 @@ class _ChangeThemeState extends State<ChangeTheme> {
   bool _isSwitch = false;
 
   @override
+  void initState() {
+    init();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) => Transform.scale(
         scale: 0.7,
         child: Row(children: [
@@ -38,4 +44,11 @@ class _ChangeThemeState extends State<ChangeTheme> {
           const Icon(Icons.wb_sunny),
         ]),
       );
+
+  void init() async {
+    AdaptiveThemeMode? checkTheme = await AdaptiveTheme.getThemeMode();
+    setState(() {
+      _isSwitch = checkTheme?.index == 0 ? true : false;
+    });
+  }
 }

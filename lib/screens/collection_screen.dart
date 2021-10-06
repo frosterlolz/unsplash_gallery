@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unsplash_gallery/data_provider.dart';
 import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/models/model.dart';
+import 'package:unsplash_gallery/res/colors.dart';
 import 'package:unsplash_gallery/screens/photo_screen.dart';
 import 'package:unsplash_gallery/widgets/photo.dart';
 
@@ -47,6 +48,14 @@ class CollectionListScreenState extends State<CollectionListScreen> {
           style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 17),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.more_vert_outlined,
+            ),
+            onPressed: () => _onButtonPressed(),
+          )
+        ],
       ),
       body: _buildListView(context, photoList),
     );
@@ -105,7 +114,90 @@ class CollectionListScreenState extends State<CollectionListScreen> {
   }
 
   void _onBigPhotoTap(context, photo) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => PhotoPage(photo: photo)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PhotoPage(
+                  photo: photo,
+                  tag: 'colItem_${photo.id}',
+                )));
+  }
+
+  void _onButtonPressed() {
+    {
+      showModalBottomSheet(
+          isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          )),
+          context: context,
+          builder: (context) {
+            return SafeArea(
+              child: Wrap(
+                // совместно с isScrollControlled позволяет контролировать высотку ботом шита
+                children: <Widget>[
+                  ListTile(
+                    title: Row(
+                      children: [
+                        Text(
+                          S.of(context).delete,
+                          style: const TextStyle(color: AppColors.red),
+                        )
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      OverlayState? overlayState = Overlay.of(context);
+                      OverlayEntry overlayEntry = OverlayEntry(
+                        builder: (context) => Positioned(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: MediaQuery.of(context)
+                                  .size
+                                  .width, // получаем width всего экрана
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                                decoration: BoxDecoration(
+                                  // color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const CircularProgressIndicator(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                      overlayState!.insert(overlayEntry);
+                      int response = await DataProvider.deleteCollection(
+                          widget.collection.id!);
+                      overlayEntry.remove();
+                      response >= 200 && response < 300
+                          ? Navigator.pop(context)
+                          : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(S.of(context).tryLater),
+                              // TODO: here we can delete collection from array, cause on Profile screen collections will not upgraded,
+                              // so if I try to click on deleted collection... ERROR
+                            ));
+                    },
+                  ),
+                  ListTile(
+                    title: Row(
+                      children: [Text(S.of(context).cancel)],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                  )
+                ],
+              ),
+            );
+          });
+    }
   }
 }

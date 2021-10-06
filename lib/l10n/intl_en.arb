@@ -34,5 +34,16 @@
   "about": "About me",
   "email": "Email",
   "username": "Username",
-  "twitter": "Twitter"
+  "twitter": "Twitter",
+  "title": "Title",
+  "addCollection": "Add a new collection",
+  "description": "Description",
+  "privateCollection": "Private collection",
+  "yes": "Yes",
+  "no": "No",
+  "add": "Add",
+  "create": "Create",
+  "error": "Error",
+  "tryLater": "Something went wrong. Please, try later."
+
 }

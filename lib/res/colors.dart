@@ -9,4 +9,6 @@ class AppColors {
   static const Color mercury = Color(0xFFE6E6E6);
   static const Color grayChateau = Color(0xFF9FA8B3);
   static const Color amaranth = Color(0xFFE73664);
+  static const Color deepGray = Color(0xFF333333);
+  static const Color red = Color(0xFFcc3300);
 }

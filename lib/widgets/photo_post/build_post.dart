@@ -15,7 +15,7 @@ Widget buildPhotoPost(context, Photo photo, bool isSearch) {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PhotoPage(photo: photo)));
+                    builder: (context) => PhotoPage(photo: photo, tag: isSearch ? 'search_${photo.id!}' : 'feed_${photo.id!}',)));
           },
           child: BigPhoto(
             photoLink: photo.urls!.regular!,

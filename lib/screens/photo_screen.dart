@@ -16,8 +16,9 @@ import 'package:unsplash_gallery/widgets/user_mini_block.dart';
 import 'package:unsplash_gallery/res/globals.dart' as globals;
 
 class PhotoPage extends StatefulWidget {
-  const PhotoPage({Key? key, required this.photo}) : super(key: key);
+  const PhotoPage({Key? key, required this.photo, required this.tag}) : super(key: key);
 
+  final String tag;
   final Photo photo;
 
   @override
@@ -107,7 +108,8 @@ class _PhotoPageState extends State<PhotoPage> {
             },
             child: BigPhoto(
               photoLink: photo.urls!.regular!,
-              tag: 'photo_screen ${photo.id}',
+              tag: widget.tag,
+              // tag: 'photo_screen ${photo.id}',
               radius: 17,
             )),
         Padding(

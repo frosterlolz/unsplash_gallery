@@ -20,7 +20,7 @@ Container buildHeader(BuildContext context, Sponsor? user) {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             elevation: 5.0,
-            // color: Colors.white,
+            color: Theme.of(context).secondaryHeaderColor,
             child: Column(
               children: <Widget>[
                 const SizedBox(height: 50.0),
@@ -81,7 +81,6 @@ Container buildHeader(BuildContext context, Sponsor? user) {
           children: <Widget>[
             GestureDetector(
               onTap: () => Navigator.of(context).push(_createRoute(user)),
-              // onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> EditProfilePage(user: user!)));},
               child: Stack(children: [
                 Material(
                   elevation: 5.0,

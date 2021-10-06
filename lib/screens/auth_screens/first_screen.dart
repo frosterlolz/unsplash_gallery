@@ -3,7 +3,7 @@ import 'package:unsplash_gallery/data_provider.dart';
 import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/screens/home.dart';
 import 'package:unsplash_gallery/screens/auth_screens/webview_page.dart';
-import 'package:unsplash_gallery/widgets/buttons/change_theme.dart';
+
 
 class LogIn extends StatefulWidget {
   const LogIn({Key? key}) : super(key: key);
@@ -19,7 +19,6 @@ class _LogInState extends State<LogIn> {
       appBar: AppBar(
         title: Text(S.of(context).mainTitle),
         centerTitle: true,
-        actions: const [ChangeTheme()],
       ),
       body: Center(
         child: Column(

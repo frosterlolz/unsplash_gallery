@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about": MessageLookupByLibrary.simpleMessage("About me"),
+        "add": MessageLookupByLibrary.simpleMessage("Add"),
+        "addCollection":
+            MessageLookupByLibrary.simpleMessage("Add a new collection"),
         "addToCollection":
             MessageLookupByLibrary.simpleMessage("Add to collection"),
         "authorization": MessageLookupByLibrary.simpleMessage("Authorization"),
@@ -30,17 +33,20 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearCache": MessageLookupByLibrary.simpleMessage("Clear cache"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
         "collections": MessageLookupByLibrary.simpleMessage("Collections"),
+        "create": MessageLookupByLibrary.simpleMessage("Create"),
         "defaultColName":
             MessageLookupByLibrary.simpleMessage("Default collection name"),
         "defaultDescription":
             MessageLookupByLibrary.simpleMessage("No description"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+        "description": MessageLookupByLibrary.simpleMessage("Description"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "downloadTitle":
             MessageLookupByLibrary.simpleMessage("Downloading photos"),
         "downloadingSure": MessageLookupByLibrary.simpleMessage(
             "Are u sure, u want to download a photo?"),
         "email": MessageLookupByLibrary.simpleMessage("Email"),
+        "error": MessageLookupByLibrary.simpleMessage("Error"),
         "first": MessageLookupByLibrary.simpleMessage("First"),
         "haveInternet": MessageLookupByLibrary.simpleMessage(
             "Internet connection established"),
@@ -53,6 +59,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "navBarItemOne": MessageLookupByLibrary.simpleMessage("Feed"),
         "navBarItemThree": MessageLookupByLibrary.simpleMessage("User"),
         "navBarItemTwo": MessageLookupByLibrary.simpleMessage("Search"),
+        "no": MessageLookupByLibrary.simpleMessage("No"),
         "noInternet":
             MessageLookupByLibrary.simpleMessage("No internet connection"),
         "noLikedPhotos":
@@ -61,10 +68,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Your photo album is empty"),
         "photo": MessageLookupByLibrary.simpleMessage("Photo"),
         "photos": MessageLookupByLibrary.simpleMessage("Photos"),
+        "privateCollection":
+            MessageLookupByLibrary.simpleMessage("Private collection"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "title": MessageLookupByLibrary.simpleMessage("Title"),
+        "tryLater": MessageLookupByLibrary.simpleMessage(
+            "Something went wrong. Please, try later."),
         "twitter": MessageLookupByLibrary.simpleMessage("Twitter"),
-        "username": MessageLookupByLibrary.simpleMessage("Username")
+        "username": MessageLookupByLibrary.simpleMessage("Username"),
+        "yes": MessageLookupByLibrary.simpleMessage("Yes")
       };
 }
