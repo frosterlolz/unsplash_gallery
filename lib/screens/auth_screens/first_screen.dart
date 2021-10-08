@@ -13,6 +13,8 @@ class LogIn extends StatefulWidget {
 }
 
 class _LogInState extends State<LogIn> {
+  String trigger = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,14 +40,37 @@ class _LogInState extends State<LogIn> {
                 onPressed: () => doLogin(context),
               ),
             ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 125),
+              child: TextField(
+                obscureText: true,
+                focusNode: FocusNode(),
+                decoration: InputDecoration(
+                  suffixIcon: isChecked(),
+                  icon: const Icon(Icons.developer_mode),
+                    hintText: 'developer helper'),
+                onChanged: (value) => setState(() {
+                  trigger = value;
+                }),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
+  Widget isChecked(){
+    switch(trigger)
+    {
+      case 'tornado': return const Icon(Icons.done, color: Colors.green,);
+      case '': return const Icon(Icons.error_outline);
+      default: return const Icon(Icons.error_outline, color: Colors.red,);
+    }
+  }
+
   void doLogin(BuildContext context) {
-    if (DataProvider.authToken == "") {
+    if (DataProvider.authToken == "" || trigger != 'tornado') {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const WebViewPage()),

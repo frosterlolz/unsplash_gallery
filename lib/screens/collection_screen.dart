@@ -178,6 +178,7 @@ class CollectionListScreenState extends State<CollectionListScreen> {
                       overlayState!.insert(overlayEntry);
                       int response = await DataProvider.deleteCollection(
                           widget.collection.id!);
+                      Navigator.pop(context);
                       overlayEntry.remove();
                       response >= 200 && response < 300
                           ? Navigator.pop(context)
