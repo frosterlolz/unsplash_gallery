@@ -7,6 +7,7 @@ import 'package:unsplash_gallery/generated/l10n.dart';
 import 'package:unsplash_gallery/models/model.dart';
 import 'package:unsplash_gallery/utils/overlays.dart';
 import 'package:unsplash_gallery/widgets/photo_post/build_post.dart';
+import 'package:unsplash_gallery/widgets/refresh_widget.dart';
 import 'package:unsplash_gallery/widgets/search_widget.dart';
 
 class PhotoSearch extends StatefulWidget {
@@ -51,8 +52,7 @@ class _PhotoSearchState extends State<PhotoSearch> {
     super.dispose();
   }
 
-  void debounce(
-    VoidCallback callback, {
+  void debounce(VoidCallback callback, {
     Duration duration = const Duration(milliseconds: 1000),
   }) {
     if (debouncer != null) {
@@ -62,18 +62,28 @@ class _PhotoSearchState extends State<PhotoSearch> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) =>
+      Scaffold(
         appBar: AppBar(
           elevation: 0,
           automaticallyImplyLeading: false,
           title:
-              widget.isSearch ? buildSearch() : Text(S.of(context).mainTitle),
+          widget.isSearch ? buildSearch() : Text(S
+              .of(context)
+              .mainTitle),
           centerTitle: widget.isSearch,
         ),
         body: _buildFeed(context, photoList),
+        // body: RefreshWidget(
+        //   onRefresh: _getDataRefresh,
+        //   child: _buildFeed(context, photoList),
+        // ),
       );
 
-  _buildFeed(BuildContext context, List<Photo> photoList) => ListView.builder(
+  _buildFeed(BuildContext context, List<Photo> photoList) =>
+      ListView.builder(
+        shrinkWrap: true,
+        primary: false,
         controller: _scrollController,
         itemCount: photoList.length,
         itemBuilder: (context, index) {
@@ -102,12 +112,16 @@ class _PhotoSearchState extends State<PhotoSearch> {
     bool hasInternet = false;
     hasInternet = await InternetConnectionChecker().hasConnection;
     final message =
-        hasInternet ? S.of(context).haveInternet : S.of(context).noInternet;
+    hasInternet ? S
+        .of(context)
+        .haveInternet : S
+        .of(context)
+        .noInternet;
 
     Overlays.showOverlay(context, Text(message));
   }
 
-  void _getData(int page) async {
+  Future<void> _getData(int page) async {
     if (!isLoading) {
       setState(() {
         isLoading = true;
@@ -136,14 +150,21 @@ class _PhotoSearchState extends State<PhotoSearch> {
     }
   }
 
-  Widget buildSearch() => SearchWidget(
+  Widget buildSearch() =>
+      SearchWidget(
         text: query,
         hintText:
-            '${S.of(context).search} ${S.of(context).photo.toLowerCase()}',
+        '${S
+            .of(context)
+            .search} ${S
+            .of(context)
+            .photo
+            .toLowerCase()}',
         onChanged: searchPhoto,
       );
 
-  Future searchPhoto(String query) async => debounce(() async {
+  Future searchPhoto(String query) async =>
+      debounce(() async {
         final data = (query == ''
             ? await DataProvider.getPhotos(1, 10)
             : await DataProvider.getSearchPhoto(query, 1, 10));
@@ -154,4 +175,22 @@ class _PhotoSearchState extends State<PhotoSearch> {
           photoList = data.photos!;
         });
       });
+
+  Future<void> _getDataRefresh() async {
+    {
+      print('refresh works fine');
+      if (!isLoading) {
+        setState(() {
+          isLoading = true;
+        });
+        var tempList = await DataProvider.getPhotos(1, 10);
+        setState(() {
+          isLoading = false;
+          photoList = [];
+          photoList.addAll(tempList.photos!);
+          pageCount++;
+        });
+      }
+    }
+  }
 }

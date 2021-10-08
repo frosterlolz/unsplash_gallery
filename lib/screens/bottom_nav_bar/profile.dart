@@ -1,6 +1,6 @@
-import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:unsplash_gallery/data_provider.dart';
 import 'package:unsplash_gallery/generated/l10n.dart';
@@ -8,7 +8,6 @@ import 'package:unsplash_gallery/models/model.dart';
 import 'package:unsplash_gallery/res/colors.dart';
 import 'package:unsplash_gallery/screens/collection_screen.dart';
 import 'package:unsplash_gallery/screens/photo_screen.dart';
-import 'package:unsplash_gallery/widgets/buttons/change_theme.dart';
 import 'package:unsplash_gallery/widgets/collection_widget.dart';
 import 'package:unsplash_gallery/widgets/header_widget.dart';
 import 'package:unsplash_gallery/widgets/photo.dart';
@@ -29,13 +28,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late StreamSubscription subscription;
+  // final RefreshController _refreshController =
+  //     RefreshController(initialRefresh: false);
   final ScrollController _scrollController = ScrollController();
   final ScrollController _horizontalController = ScrollController();
   int pageCollectionsCount = 1;
   int pageCount = 1;
   int pageLikedCount = 1;
-  bool isLoading = false; // photos+LikedPhotos
-  bool isLoadingCol = false; // collections
+  bool isLoading = false;
+  bool isLoadingCol = false;
   List<Photo> userPhotos = [];
   List<Photo> userLikedPhotos = [];
   List<Collection> userColList = [];
@@ -43,7 +45,18 @@ class _ProfilePageState extends State<ProfilePage> {
   String title = '';
   String description = '';
   bool _isPrivate = false;
-  // late Collection collection;
+  final List<Tab> _tabs = const [
+    Tab(
+      icon: Icon(
+        Icons.grid_on_sharp,
+      ),
+    ),
+    Tab(
+      icon: Icon(
+        FontAwesomeIcons.heart,
+      ),
+    ),
+  ];
 
   @override
   void initState() {
@@ -80,137 +93,75 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  final List<Tab> _tabs = const [
-    Tab(
-      icon: Icon(
-        Icons.grid_on_sharp,
-      ),
-    ),
-    Tab(
-      icon: Icon(
-        FontAwesomeIcons.heart,
-      ),
-    ),
-  ];
-
   @override
-  Widget build(BuildContext context) => Builder(
-        builder: (context) => Scaffold(
-            endDrawer: Container(
-              width: MediaQuery.of(context).size.width * 0.70,
-              margin: EdgeInsets.only(top: 60),
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(25)),
-
-                child: Drawer(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                      children: [
-                        ListTile(title: Text(widget.user.name!, style: TextStyle(fontSize: 18),)),
-                        Divider(thickness: 1.0,),
-                        ListTile(title: Row(children:[Icon(Icons.cached_outlined), SizedBox(width: 10,) ,Text(S.of(context).clearCache)])),
-                      ],
-                    ),
-                      Column(children: [Divider(thickness: 1.0,),Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            // TODO: u know what to do)
-                              onPressed: (){},
-                              icon: Icon(Icons.lightbulb))
-                        ],
-                      )])
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            endDrawerEnableOpenDragGesture: false,
-            appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(40),
-                child: _buildAppBar()),
-            body: _buildTabController()),
-      );
-
-  Widget _buildAppBar() => AppBar(
-        title: Text(
-          // TODO: change this
-          widget.user.username ?? 'username Null',
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(
-        //       Icons.settings,
-        //     ),
-        //     onPressed: () =>
-        //         // _onButtonPressed(),
-        //   )
-        // ],
-      );
-
-  Widget _buildTabController() => DefaultTabController(
-        length: 2,
-        child: Stack(
+  Widget build(BuildContext context) => Scaffold(
+        body: Stack(
           children: [
             Container(
               height: 200.0,
               decoration: const BoxDecoration(
                 gradient: RadialGradient(
-                    radius: 1.5,
-                    colors: [AppColors.alto, AppColors.dodgerBlue]),
+                  radius: 1.5,
+                  colors: [AppColors.alto, AppColors.dodgerBlue],
+                ),
               ),
             ),
-            NestedScrollView(
-                controller: _scrollController,
-                headerSliverBuilder: (context, _) {
-                  return [
-                    SliverList(
-                        delegate: SliverChildListDelegate([
-                      _mainListBuilder(context, userColList),
-                    ])),
-                  ];
-                },
-                body: Column(
-                  children: <Widget>[
-                    Material(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: TabBar(
-                        onTap: (index) => setState(() {
-                          currentTab = index;
-                        }),
-                        indicatorWeight: 1,
-                        indicatorColor: Theme.of(context).primaryColor,
-                        tabs: _tabs,
+            DefaultTabController(
+              length: 2,
+              child: NestedScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  controller: _scrollController,
+                  headerSliverBuilder: (context, _) {
+                    return [
+                      SliverList(
+                          delegate: SliverChildListDelegate([
+                        _mainListBuilder(context, userColList),
+                      ])),
+                    ];
+                  },
+                  body: Column(
+                    children: <Widget>[
+                      Material(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: TabBar(
+                          onTap: (index) => setState(() {
+                            currentTab = index;
+                          }),
+                          indicatorWeight: 1,
+                          indicatorColor: Theme.of(context).primaryColor,
+                          tabs: _tabs,
+                        ),
+
                       ),
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          userPhotos.isEmpty
-                              ? Center(
-                                  child: Text(S.of(context).noPhotos),
-                                )
-                              : _gallery(userPhotos),
-                          userLikedPhotos.isEmpty
-                              ? Center(
-                                  child: Text(S.of(context).noLikedPhotos),
-                                )
-                              : _gallery(userLikedPhotos),
-                          // Container(),
-                        ],
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            userPhotos.isEmpty
+                                ? Container(
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    child: Center(
+                                      child: Text(S.of(context).noPhotos),
+                                    ),
+                                  )
+                                : _gallery(userPhotos),
+                            userLikedPhotos.isEmpty
+                                ? Container(
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    child: Center(
+                                      child: Text(S.of(context).noLikedPhotos),
+                                    ),
+                                  )
+                                : _gallery(userLikedPhotos),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                )),
+                    ],
+                  ),
+                ),
+            ),
           ],
         ),
       );
@@ -419,61 +370,61 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       );
 
-  void _onButtonPressed() {
-    showAdaptiveActionSheet(
-        context: context,
-        actions: [
-          BottomSheetAction(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(S.of(context).changeTheme),
-                  const ChangeTheme(),
-                ],
-              ),
-              onPressed: () {}),
-          BottomSheetAction(
-            title: Text(S.of(context).clearCache),
-            onPressed: clearCache,
-          ),
-        ],
-        cancelAction: CancelAction(title: Text(S.of(context).cancel)));
+  // void _onButtonPressed() {
+  //   showAdaptiveActionSheet(
+  //       context: context,
+  //       actions: [
+  //         BottomSheetAction(
+  //             title: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 Text(S.of(context).changeTheme),
+  //                 const ChangeTheme(),
+  //               ],
+  //             ),
+  //             onPressed: () {}),
+  //         BottomSheetAction(
+  //           title: Text(S.of(context).clearCache),
+  //           onPressed: clearCache,
+  //         ),
+  //       ],
+  //       cancelAction: CancelAction(title: Text(S.of(context).cancel)));
 
-    // showModalBottomSheet(
-    //   constraints: BoxConstraints.tightFor(width: MediaQuery.of(context).size.width - 30),
-    //     isScrollControlled: true,
-    //     shape: const RoundedRectangleBorder(
-    //         borderRadius: BorderRadius.only(
-    //       topLeft: Radius.circular(25),
-    //       topRight: Radius.circular(25),
-    //     )),
-    //     context: context,
-    //     builder: (context) {
-    //       return SafeArea(
-    //         child: Wrap(
-    //           // совместно с isScrollControlled позволяет контролировать высотку ботом шита
-    //           children: <Widget>[
-    //             ListTile(
-    //               title: Row(
-    //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                 children: [
-    //                   Text(S.of(context).changeTheme),
-    //                   const ChangeTheme(),
-    //                 ],
-    //               ),
-    //               onTap: () {},
-    //             ),
-    //             Divider(),
-    //             ListTile(
-    //               title: Text(S.of(context).clearCache),
-    //               onTap: clearCache,
-    //             ),
-    //             Divider(),
-    //           ],
-    //         ),
-    //       );
-    //     });
-  }
+  // showModalBottomSheet(
+  //   constraints: BoxConstraints.tightFor(width: MediaQuery.of(context).size.width - 30),
+  //     isScrollControlled: true,
+  //     shape: const RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.only(
+  //       topLeft: Radius.circular(25),
+  //       topRight: Radius.circular(25),
+  //     )),
+  //     context: context,
+  //     builder: (context) {
+  //       return SafeArea(
+  //         child: Wrap(
+  //           // совместно с isScrollControlled позволяет контролировать высотку ботом шита
+  //           children: <Widget>[
+  //             ListTile(
+  //               title: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Text(S.of(context).changeTheme),
+  //                   const ChangeTheme(),
+  //                 ],
+  //               ),
+  //               onTap: () {},
+  //             ),
+  //             Divider(),
+  //             ListTile(
+  //               title: Text(S.of(context).clearCache),
+  //               onTap: clearCache,
+  //             ),
+  //             Divider(),
+  //           ],
+  //         ),
+  //       );
+  //     });
+  // }
 
   void init(String username, page, colPage, likedPage) async {
     setState(() {
@@ -497,13 +448,6 @@ class _ProfilePageState extends State<ProfilePage> {
       isLoading = false;
       isLoadingCol = false;
     });
-  }
-
-  void clearCache() {
-    DefaultCacheManager().emptyCache();
-    imageCache!.clear();
-    imageCache!.clearLiveImages();
-    setState(() {});
   }
 
   void _getPhotoByUser(int page) async {
@@ -553,4 +497,34 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     }
   }
+  //
+  // void _onRefresh() async {
+  //   setState(() {
+  //     isLoading = true;
+  //     isLoadingCol = true;
+  //   });
+  //   PhotoList tempPhotosList =
+  //       await DataProvider.getPhotoByUser(widget.user.username!, 1, 10);
+  //   CollectionList tempCollectionsList =
+  //       await DataProvider.getCollectionsByUser(widget.user.username!, 1, 10);
+  //   PhotoList tempLikedPhotos =
+  //       await DataProvider.getLikedPhotoByUser(widget.user.username!, 1, 10);
+  //
+  //   if (mounted) {
+  //     setState(() {
+  //       pageCollectionsCount++;
+  //       pageCount++;
+  //       pageLikedCount++;
+  //       userPhotos = [];
+  //       userColList = [];
+  //       userLikedPhotos = [];
+  //       userPhotos.addAll(tempPhotosList.photos!);
+  //       userColList.addAll(tempCollectionsList.collections!);
+  //       userLikedPhotos.addAll(tempLikedPhotos.photos!);
+  //       isLoading = false;
+  //       isLoadingCol = false;
+  //     });
+  //   }
+  //   _refreshController.loadComplete();
+  // }
 }

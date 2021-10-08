@@ -10,6 +10,8 @@ import 'package:unsplash_gallery/screens/bottom_nav_bar/feed_and_search.dart';
 import 'package:unsplash_gallery/screens/bottom_nav_bar/profile.dart';
 import 'package:unsplash_gallery/widgets/bottom_nav_bar.dart';
 import 'package:unsplash_gallery/res/globals.dart' as globals;
+import 'package:unsplash_gallery/widgets/buttons/change_theme.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -59,9 +61,80 @@ class _MyHomePageState extends State<MyHomePage> {
         inactiveColor: AppColors.manatee,
         textAlign: TextAlign.center,
       ),
+      // BottomNavBarItem(
+      //   asset: FontAwesomeIcons.plus,
+      //   title: Text(S.of(context).navBarItemThree),
+      //   activeColor: AppColors.dodgerBlue,
+      //   inactiveColor: AppColors.manatee,
+      //   textAlign: TextAlign.center,
+      // ),
     ];
 
     return Scaffold(
+      appBar: currentTab == 2
+          ? PreferredSize(
+              preferredSize: const Size.fromHeight(40), child: _buildAppBar())
+          : null,
+      endDrawer: Container(
+        width: MediaQuery.of(context).size.width * 0.70,
+        margin: const EdgeInsets.only(top: 60),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(25)),
+          child: Drawer(
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      ListTile(
+                          title: Text(
+                        user == null ? '' : user!.name!,
+                        style: const TextStyle(fontSize: 18),
+                      )),
+                      const Divider(
+                        thickness: 1.0,
+                      ),
+                      ListTile(
+                        onTap: clearCache,
+                          title: Row(children: [
+                        const Icon(Icons.cached_outlined),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(S.of(context).clearCache)
+                      ])),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 9),
+                    child: Column(children: [
+                      const Divider(
+                        thickness: 1.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.settings_outlined),
+                              const SizedBox(width: 5.0),
+                              Text(S.of(context).settings),
+                            ],
+                          ),
+                          const ChangeTheme(),
+                        ],
+                      )
+                    ]),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      endDrawerEnableOpenDragGesture: false,
       body: IndexedStack(
         index: currentTab,
         children: [
@@ -71,11 +144,9 @@ class _MyHomePageState extends State<MyHomePage> {
           isLoading != true
               ? ProfilePage(user: user!, myProfile: true)
               : const Center(child: CircularProgressIndicator()),
-          // const Center(child: ChangeTheme(),),
-          // user == null ? const Center(child: CircularProgressIndicator()) : MyProfilePage(user: user!,),
-          // isLoading != true ? PhotoListScreen(photoList) : Center(child: CircularProgressIndicator()),
-          // isLoading != true ? PhotoSearch(photoList) : Center(child: CircularProgressIndicator()),
-          // isLoading != true ? MyProfilePage(user: user!) : Center(child: CircularProgressIndicator()),
+          // isLoading != true
+          //     ? RefreshScreen(user: user!, myProfile: true)
+          //     : const Center(child: CircularProgressIndicator()),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
@@ -90,17 +161,22 @@ class _MyHomePageState extends State<MyHomePage> {
         items: _tabs,
         currentTab: currentTab,
       ),
-      // bottomNavigationBar: BottomNavigationBar(items: [],),
     );
   }
 
-  // void _getMyProfile() async {
-  //   var tempUser = await DataProvider.getMyProfile();
-  //   setState(() {
-  //     user = tempUser;
-  //     globals.gMyProfile = user;
-  //   });
-  // }
+  Widget _buildAppBar() => AppBar(
+        title: Text(
+          // TODO: change this
+          user == null ? 'username Null' : user!.username!,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        elevation: 0,
+      );
 
   void _getData() async {
     if (!isLoading) {
@@ -118,5 +194,12 @@ class _MyHomePageState extends State<MyHomePage> {
         isLoading = false;
       });
     }
+  }
+
+  void clearCache() async {
+    await DefaultCacheManager().emptyCache();
+    imageCache!.clear();
+    imageCache!.clearLiveImages();
+    setState(() {});
   }
 }

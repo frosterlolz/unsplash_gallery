@@ -3,7 +3,7 @@ import 'package:unsplash_gallery/res/colors.dart';
 
 final kLightTheme = ThemeData.light().copyWith(
   secondaryHeaderColor: AppColors.white,
-  canvasColor: AppColors.grayChateau,
+  canvasColor: AppColors.white,
   tabBarTheme: const TabBarTheme().copyWith(
     labelColor: Colors.black,
     unselectedLabelColor: AppColors.grayChateau,
@@ -33,6 +33,7 @@ final kLightTheme = ThemeData.light().copyWith(
 );
 
 final kDarkTheme = ThemeData.dark().copyWith(
+
   secondaryHeaderColor: AppColors.deepGray,
   tabBarTheme: const TabBarTheme().copyWith(labelColor: AppColors.white,
     unselectedLabelColor: AppColors.grayChateau //Colors.white30,

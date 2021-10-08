@@ -21,6 +21,29 @@ class PhotoList {
   }
 }
 
+// class PhotoList {
+//   List<Photo>? photos;
+//
+//   PhotoList({this.photos});
+//
+//   PhotoList.fromJson(List<dynamic> json) {
+//     photos = <Photo>[];
+//     for (var value in json) {
+//       photos!.add(Photo.fromJson(value as Map<String, dynamic>));
+//     }
+//   }
+//
+//   List<dynamic> toJson() {
+//     List<dynamic> result = <dynamic>[];
+//
+//     for (var element in photos!) {
+//       result.add(element.toJson());
+//     }
+//
+//     return result;
+//   }
+// }
+
 class Photo {
   String? id;
   String? createdAt;
